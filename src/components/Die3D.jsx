@@ -64,9 +64,9 @@ export default function Die3D({ sides, value, rolling, position = [0, 0, 0], dim
       <meshStandardMaterial
         color={color}
         emissive={color}
-        emissiveIntensity={0.08}
-        roughness={0.85}
-        metalness={0.1}
+        emissiveIntensity={0.22}
+        roughness={0.7}
+        metalness={0.25}
         map={texture}
         opacity={dimmed ? 0.3 : 1}
         transparent={dimmed}

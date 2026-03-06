@@ -3,7 +3,7 @@
   height: 320px;
   border: 1px solid var(--border-gold);
   border-radius: 8px;
-  background: radial-gradient(ellipse at center, #1a1208 0%, #0d0b08 100%);
+  background: radial-gradient(ellipse at center, #2e2210 0%, #1c1608 100%);
   overflow: hidden;
 }
 

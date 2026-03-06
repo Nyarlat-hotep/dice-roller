@@ -29,9 +29,9 @@ export default function DiceArena({ result, rolling }) {
         camera={{ position: [0, 3, 8], fov: 45 }}
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={0.4} />
-        <pointLight position={[5, 8, 5]} intensity={1.2} color="#ffcc66" />
-        <pointLight position={[-5, -3, -5]} intensity={0.3} color="#441100" />
+        <ambientLight intensity={0.7} />
+        <pointLight position={[5, 8, 5]} intensity={2.0} color="#ffcc66" />
+        <pointLight position={[-5, -3, -5]} intensity={0.5} color="#663300" />
 
         {/* Kept dice */}
         {rolls.map((value, i) => (

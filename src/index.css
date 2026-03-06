@@ -1,19 +1,19 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg-body: #0d0b08;
-  --bg-surface: #1a1610;
-  --bg-panel: #211d14;
-  --fg-gold: #c9a84c;
-  --fg-gold-dim: rgba(201, 168, 76, 0.6);
-  --fg-gold-faint: rgba(201, 168, 76, 0.25);
-  --fg-parchment: #e8d5a3;
-  --fg-parchment-dim: rgba(232, 213, 163, 0.6);
-  --border-gold: rgba(201, 168, 76, 0.25);
-  --border-gold-hover: rgba(201, 168, 76, 0.5);
+  --bg-body: #1c1608;
+  --bg-surface: #2a1f0e;
+  --bg-panel: #352814;
+  --fg-gold: #e0b030;
+  --fg-gold-dim: rgba(224, 176, 48, 0.8);
+  --fg-gold-faint: rgba(224, 176, 48, 0.5);
+  --fg-parchment: #f5e8c4;
+  --fg-parchment-dim: rgba(245, 232, 196, 0.8);
+  --border-gold: rgba(224, 176, 48, 0.45);
+  --border-gold-hover: rgba(224, 176, 48, 0.75);
   --accent-red: #8b1a1a;
   --accent-red-bright: #c0392b;
-  --shadow: rgba(0, 0, 0, 0.8);
+  --shadow: rgba(0, 0, 0, 0.7);
 }
 
 body {
