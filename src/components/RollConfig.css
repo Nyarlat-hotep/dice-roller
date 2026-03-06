@@ -1,0 +1,9 @@
+.roll-config { display: flex; flex-direction: column; gap: 1rem; }
+
+.roll-config-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
