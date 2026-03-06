@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
+import { OrbitControls, Environment } from '@react-three/drei'
 import Die3D from './Die3D'
 import './DiceArena.css'
 
@@ -26,12 +26,18 @@ export default function DiceArena({ result, rolling }) {
   return (
     <div className="dice-arena">
       <Canvas
-        camera={{ position: [0, 3, 8], fov: 45 }}
+        camera={{ position: [0, 3, 8], fov: 40 }}
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={0.7} />
-        <pointLight position={[5, 8, 5]} intensity={2.0} color="#ffcc66" />
-        <pointLight position={[-5, -3, -5]} intensity={0.5} color="#663300" />
+        {/* IBL — makes shapes read as genuinely 3D */}
+        <Environment preset="night" />
+
+        {/* Dramatic key light from top-right */}
+        <directionalLight position={[4, 8, 4]} intensity={2.5} color="#fff8e8" />
+        {/* Cool fill from opposite side */}
+        <directionalLight position={[-4, -2, -4]} intensity={0.6} color="#8090cc" />
+        {/* Warm glow from below (table bounce) */}
+        <pointLight position={[0, -4, 2]} intensity={0.8} color="#cc8840" />
 
         {/* Kept dice */}
         {rolls.map((value, i) => (

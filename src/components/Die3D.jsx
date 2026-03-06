@@ -42,20 +42,21 @@ export default function Die3D({ sides, value, rolling, position = [0, 0, 0], dim
 
   return (
     <group position={position}>
-      {/* Die shape — rotates via meshRef */}
       <mesh ref={meshRef} geometry={geometry}>
-        <meshStandardMaterial
+        <meshPhysicalMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={0.22}
-          roughness={0.7}
-          metalness={0.25}
-          opacity={dimmed ? 0.3 : 1}
+          emissiveIntensity={0.12}
+          roughness={0.08}
+          metalness={0.15}
+          clearcoat={1}
+          clearcoatRoughness={0.05}
+          reflectivity={1}
+          opacity={dimmed ? 0.35 : 1}
           transparent={dimmed}
         />
       </mesh>
 
-      {/* Number label — always faces camera, pinned to die center */}
       <Html center distanceFactor={8} style={{ pointerEvents: 'none' }}>
         <span style={{
           fontFamily: 'Georgia, serif',
