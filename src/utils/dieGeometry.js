@@ -59,11 +59,11 @@ export function getDieGeometry(sides) {
 }
 
 export const DIE_COLORS = {
-  4:   '#c48a1a',
-  6:   '#a84020',
-  8:   '#2068a8',
-  10:  '#7040b8',
-  12:  '#a82030',
-  20:  '#208050',
-  100: '#a07820',
+  4:   '#d04015',   // Inferno  — fire
+  6:   '#2e7d3a',   // Grove    — forest
+  8:   '#1a68b0',   // Torrent  — deep water
+  10:  '#7030c0',   // Void     — arcane shadow
+  12:  '#b01835',   // Blood    — crimson warrior
+  20:  '#b89010',   // Sacred   — gleaming gold
+  100: '#5030b0',   // Arcane   — spellbook indigo
 }

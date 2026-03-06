@@ -1,22 +1,25 @@
 .roll-btn {
-  padding: 0.6rem 2rem;
+  padding: 0.65rem 2.2rem;
   border-radius: 6px;
-  border: 1px solid var(--fg-gold);
-  background: rgba(201, 168, 76, 0.12);
-  color: var(--fg-gold);
+  border: 1px solid rgba(192, 32, 64, 0.8);
+  background: rgba(192, 32, 64, 0.18);
+  color: var(--fg-parchment);
   font-family: monospace;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   letter-spacing: 3px;
   text-transform: uppercase;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 16px rgba(192, 32, 64, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .roll-btn:hover:not(:disabled) {
-  background: rgba(201, 168, 76, 0.22);
-  box-shadow: 0 0 16px rgba(201, 168, 76, 0.3);
+  background: rgba(192, 32, 64, 0.35);
+  border-color: rgba(224, 48, 80, 0.9);
+  box-shadow: 0 0 28px rgba(192, 32, 64, 0.4), 0 0 8px rgba(192, 32, 64, 0.2);
+  color: #fff;
 }
 
 .roll-btn--rolling {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: default;
 }

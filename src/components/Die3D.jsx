@@ -9,10 +9,10 @@ function makeNumberTexture(value) {
   canvas.height = 256
   const ctx = canvas.getContext('2d')
 
-  ctx.fillStyle = '#2a1f0a'
+  ctx.fillStyle = '#08091a'
   ctx.fillRect(0, 0, 256, 256)
-  ctx.fillStyle = '#c9a84c'
-  ctx.font = 'bold 120px Georgia, serif'
+  ctx.fillStyle = '#f0e6d0'
+  ctx.font = 'bold 130px Georgia, serif'
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillText(String(value), 128, 128)

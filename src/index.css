@@ -1,19 +1,20 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg-body: #1c1608;
-  --bg-surface: #2a1f0e;
-  --bg-panel: #352814;
-  --fg-gold: #e0b030;
-  --fg-gold-dim: rgba(224, 176, 48, 0.8);
-  --fg-gold-faint: rgba(224, 176, 48, 0.5);
-  --fg-parchment: #f5e8c4;
-  --fg-parchment-dim: rgba(245, 232, 196, 0.8);
-  --border-gold: rgba(224, 176, 48, 0.45);
-  --border-gold-hover: rgba(224, 176, 48, 0.75);
-  --accent-red: #8b1a1a;
-  --accent-red-bright: #c0392b;
-  --shadow: rgba(0, 0, 0, 0.7);
+  --bg-body: #0d0f1c;
+  --bg-surface: #141828;
+  --bg-panel: #1b2038;
+  --fg-gold: #d4b030;
+  --fg-gold-dim: rgba(212, 176, 48, 0.8);
+  --fg-gold-faint: rgba(212, 176, 48, 0.45);
+  --fg-parchment: #f0e6d0;
+  --fg-parchment-dim: rgba(240, 230, 208, 0.75);
+  --border-gold: rgba(212, 176, 48, 0.35);
+  --border-gold-hover: rgba(212, 176, 48, 0.7);
+  --accent-arcane: #8050d0;
+  --accent-red: #c02040;
+  --accent-red-bright: #e03050;
+  --shadow: rgba(0, 0, 0, 0.85);
 }
 
 body {
@@ -29,8 +30,8 @@ body::before {
   position: fixed;
   inset: 0;
   background-image:
-    radial-gradient(ellipse at 20% 10%, rgba(201, 168, 76, 0.04) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 90%, rgba(139, 26, 26, 0.05) 0%, transparent 50%);
+    radial-gradient(ellipse at 25% 15%, rgba(128, 80, 208, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 85%, rgba(212, 176, 48, 0.08) 0%, transparent 55%);
   pointer-events: none;
   z-index: 0;
 }

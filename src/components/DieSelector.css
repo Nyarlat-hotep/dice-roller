@@ -6,11 +6,11 @@
 }
 
 .die-btn {
-  padding: 0.4rem 0.75rem;
-  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
   border: 1px solid var(--border-gold);
-  background: transparent;
-  color: var(--fg-gold-dim);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--fg-parchment-dim);
   font-family: monospace;
   font-size: 0.85rem;
   letter-spacing: 1px;
@@ -19,13 +19,15 @@
 
 .die-btn:hover {
   border-color: var(--border-gold-hover);
-  color: var(--fg-gold);
-  background: rgba(201, 168, 76, 0.05);
+  color: var(--fg-parchment);
+  background: rgba(212, 176, 48, 0.06);
 }
 
-.die-btn--active {
-  border-color: var(--fg-gold);
-  color: var(--fg-gold);
-  background: rgba(201, 168, 76, 0.12);
-  box-shadow: 0 0 8px rgba(201, 168, 76, 0.2);
-}
+/* Each die glows its elemental color when selected */
+.die-btn--active[data-sides="4"]   { border-color: #e04820; color: #f06040; background: rgba(224, 72, 32, 0.15); box-shadow: 0 0 14px rgba(224, 72, 32, 0.4); }
+.die-btn--active[data-sides="6"]   { border-color: #3a9e48; color: #5cca6e; background: rgba(58, 158, 72, 0.15); box-shadow: 0 0 14px rgba(58, 158, 72, 0.4); }
+.die-btn--active[data-sides="8"]   { border-color: #2880d0; color: #50aaff; background: rgba(40, 128, 208, 0.15); box-shadow: 0 0 14px rgba(40, 128, 208, 0.4); }
+.die-btn--active[data-sides="10"]  { border-color: #8848e0; color: #b07cff; background: rgba(136, 72, 224, 0.15); box-shadow: 0 0 14px rgba(136, 72, 224, 0.4); }
+.die-btn--active[data-sides="12"]  { border-color: #c82040; color: #ff5070; background: rgba(200, 32, 64, 0.15); box-shadow: 0 0 14px rgba(200, 32, 64, 0.4); }
+.die-btn--active[data-sides="20"]  { border-color: #d4b030; color: #f5d050; background: rgba(212, 176, 48, 0.15); box-shadow: 0 0 14px rgba(212, 176, 48, 0.4); }
+.die-btn--active[data-sides="100"] { border-color: #6040c8; color: #9878ff; background: rgba(96, 64, 200, 0.15); box-shadow: 0 0 14px rgba(96, 64, 200, 0.4); }
