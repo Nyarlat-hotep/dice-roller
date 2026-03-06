@@ -1,0 +1,31 @@
+.die-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.die-btn {
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-gold);
+  background: transparent;
+  color: var(--fg-gold-dim);
+  font-family: monospace;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  transition: all 0.15s ease;
+}
+
+.die-btn:hover {
+  border-color: var(--border-gold-hover);
+  color: var(--fg-gold);
+  background: rgba(201, 168, 76, 0.05);
+}
+
+.die-btn--active {
+  border-color: var(--fg-gold);
+  color: var(--fg-gold);
+  background: rgba(201, 168, 76, 0.12);
+  box-shadow: 0 0 8px rgba(201, 168, 76, 0.2);
+}
