@@ -1,33 +1,14 @@
 import { useRef, useMemo, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
-import * as THREE from 'three'
+import { Html } from '@react-three/drei'
 import { getDieGeometry, DIE_COLORS } from '../utils/dieGeometry'
-
-function makeNumberTexture(value) {
-  const canvas = document.createElement('canvas')
-  canvas.width = 256
-  canvas.height = 256
-  const ctx = canvas.getContext('2d')
-
-  ctx.fillStyle = '#08091a'
-  ctx.fillRect(0, 0, 256, 256)
-  ctx.fillStyle = '#f0e6d0'
-  ctx.font = 'bold 130px Georgia, serif'
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  ctx.fillText(String(value), 128, 128)
-
-  return new THREE.CanvasTexture(canvas)
-}
 
 export default function Die3D({ sides, value, rolling, position = [0, 0, 0], dimmed = false }) {
   const meshRef = useRef()
   const stateRef = useRef({ vel: { x: 0, y: 0, z: 0 }, settled: false, elapsed: 0 })
 
   const geometry = useMemo(() => getDieGeometry(sides), [sides])
-  const texture = useMemo(() => makeNumberTexture(value), [value])
 
-  // Reset animation when a new roll starts
   useEffect(() => {
     if (rolling) {
       stateRef.current = {
@@ -60,17 +41,36 @@ export default function Die3D({ sides, value, rolling, position = [0, 0, 0], dim
   const color = DIE_COLORS[sides] || '#7a5c2e'
 
   return (
-    <mesh ref={meshRef} position={position} geometry={geometry}>
-      <meshStandardMaterial
-        color={color}
-        emissive={color}
-        emissiveIntensity={0.22}
-        roughness={0.7}
-        metalness={0.25}
-        map={texture}
-        opacity={dimmed ? 0.3 : 1}
-        transparent={dimmed}
-      />
-    </mesh>
+    <group position={position}>
+      {/* Die shape — rotates via meshRef */}
+      <mesh ref={meshRef} geometry={geometry}>
+        <meshStandardMaterial
+          color={color}
+          emissive={color}
+          emissiveIntensity={0.22}
+          roughness={0.7}
+          metalness={0.25}
+          opacity={dimmed ? 0.3 : 1}
+          transparent={dimmed}
+        />
+      </mesh>
+
+      {/* Number label — always faces camera, pinned to die center */}
+      <Html center distanceFactor={8} style={{ pointerEvents: 'none' }}>
+        <span style={{
+          fontFamily: 'Georgia, serif',
+          fontSize: '2.4rem',
+          fontWeight: 'bold',
+          color: '#ffffff',
+          textShadow: `0 0 12px ${color}, 0 0 28px ${color}, 0 1px 2px rgba(0,0,0,0.9)`,
+          opacity: dimmed ? 0.35 : 1,
+          userSelect: 'none',
+          whiteSpace: 'nowrap',
+          display: 'block',
+        }}>
+          {value}
+        </span>
+      </Html>
+    </group>
   )
 }
