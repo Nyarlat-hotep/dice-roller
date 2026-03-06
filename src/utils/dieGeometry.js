@@ -63,14 +63,21 @@ function setupFaceTexturing(geometry, trianglesPerFace) {
           uvArray[base + 4] = 0.95; uvArray[base + 5] = 0.5   // right
         }
       } else {
-        // Three-triangle pentagon face (d12) — fan from center
-        const a0 = (tri / 3) * Math.PI * 2 - Math.PI / 2
-        const a1 = ((tri + 1) / 3) * Math.PI * 2 - Math.PI / 2
-        uvArray[base + 0] = 0.5; uvArray[base + 1] = 0.5
-        uvArray[base + 2] = 0.5 + 0.48 * Math.cos(a0)
-        uvArray[base + 3] = 0.5 + 0.48 * Math.sin(a0)
-        uvArray[base + 4] = 0.5 + 0.48 * Math.cos(a1)
-        uvArray[base + 5] = 0.5 + 0.48 * Math.sin(a1)
+        // Pentagon fan-from-corner (d12): Three.js triangulates each pentagon as a fan
+        // from its first vertex (the "fan vertex"), NOT from the geometric center.
+        // UV maps all 5 pentagon vertices to a regular pentagon whose centroid is (0.5, 0.5).
+        //   v0 (fan vertex) at top: (0.5, 0.94)
+        //   v1..v4 arranged CCW so centroid = (0.5, 0.5)
+        const PENT = [
+          [0.5,   0.94],   // v0 — fan vertex (top)
+          [0.918, 0.636],  // v1
+          [0.759, 0.144],  // v2
+          [0.241, 0.144],  // v3
+          [0.082, 0.636],  // v4
+        ]
+        uvArray[base + 0] = PENT[0][0];       uvArray[base + 1] = PENT[0][1]
+        uvArray[base + 2] = PENT[tri + 1][0]; uvArray[base + 3] = PENT[tri + 1][1]
+        uvArray[base + 4] = PENT[tri + 2][0]; uvArray[base + 5] = PENT[tri + 2][1]
       }
     }
 
@@ -78,6 +85,30 @@ function setupFaceTexturing(geometry, trianglesPerFace) {
   }
 
   geometry.setAttribute('uv', new THREE.BufferAttribute(uvArray, 2))
+
+  // Recompute flat, outward-pointing normals for every triangle.
+  // This overrides any wrong winding from the source geometry and gives
+  // a proper flat-faceted look for all polyhedral dice.
+  const pos = geometry.attributes.position
+  const normArr = new Float32Array(posCount * 3)
+  for (let i = 0; i < posCount; i += 3) {
+    const ax = pos.getX(i),   ay = pos.getY(i),   az = pos.getZ(i)
+    const bx = pos.getX(i+1), by = pos.getY(i+1), bz = pos.getZ(i+1)
+    const cx = pos.getX(i+2), cy = pos.getY(i+2), cz = pos.getZ(i+2)
+    const e1x=bx-ax, e1y=by-ay, e1z=bz-az
+    const e2x=cx-ax, e2y=cy-ay, e2z=cz-az
+    let nx=e1y*e2z-e1z*e2y, ny=e1z*e2x-e1x*e2z, nz=e1x*e2y-e1y*e2x
+    // If normal points toward origin (inward), flip it
+    const mx=(ax+bx+cx)/3, my=(ay+by+cy)/3, mz=(az+bz+cz)/3
+    if (nx*mx+ny*my+nz*mz < 0) { nx=-nx; ny=-ny; nz=-nz }
+    const len = Math.sqrt(nx*nx+ny*ny+nz*nz) || 1
+    for (let j = 0; j < 3; j++) {
+      normArr[(i+j)*3]   = nx/len
+      normArr[(i+j)*3+1] = ny/len
+      normArr[(i+j)*3+2] = nz/len
+    }
+  }
+  geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normArr, 3))
 }
 
 export function getDieGeometry(sides) {
