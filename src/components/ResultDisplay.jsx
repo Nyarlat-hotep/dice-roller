@@ -8,6 +8,7 @@ export default function ResultDisplay({ result, rolling }) {
 
   return (
     <div className={`result-display${rolling ? ' result-display--rolling' : ''}`}>
+      <div className="result-fate-label">the fates decree</div>
       <div className="result-total">{total}</div>
       <div className="result-breakdown">
         <span className="result-rolls">

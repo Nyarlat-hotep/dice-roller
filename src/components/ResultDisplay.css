@@ -1,3 +1,12 @@
+.result-fate-label {
+  font-size: 0.55rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--fg-gold-faint);
+  font-family: monospace;
+  margin-bottom: 0.4rem;
+}
+
 .result-display {
   text-align: center;
   padding: 1rem;

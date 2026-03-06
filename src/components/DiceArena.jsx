@@ -13,7 +13,7 @@ export default function DiceArena({ result, rolling }) {
   if (!result) {
     return (
       <div className="dice-arena dice-arena--empty">
-        <p className="dice-arena-hint">Configure your roll and press Roll</p>
+        <p className="dice-arena-hint">The bones await your command, traveller</p>
       </div>
     )
   }

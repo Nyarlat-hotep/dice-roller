@@ -7,7 +7,7 @@ export default function RollButton({ onClick, rolling }) {
       onClick={onClick}
       disabled={rolling}
     >
-      {rolling ? 'Rolling...' : 'Roll'}
+      {rolling ? 'The bones tumble...' : 'Cast the Bones'}
     </button>
   )
 }

@@ -46,8 +46,10 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1 className="app-title">Dice Roller</h1>
-        <p className="app-subtitle">Roll the bones</p>
+        <p className="app-eyebrow">✦ Tome of Fortune ✦</p>
+        <h1 className="app-title">The Bones</h1>
+        <p className="app-subtitle">May the dice reveal your fate, traveller</p>
+        <div className="app-divider"><span>⟡</span></div>
       </header>
       <RollConfig config={config} onChange={updateConfig} onRoll={handleRoll} rolling={rolling} />
       <DiceArena result={result} rolling={rolling} />

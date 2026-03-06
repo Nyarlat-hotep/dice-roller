@@ -5,7 +5,7 @@ export default function HistoryLog({ history }) {
 
   return (
     <div className="history-log panel">
-      <div className="history-label">Roll History</div>
+      <div className="history-label">The Chronicle</div>
       <ul className="history-list">
         {history.map(entry => (
           <li key={entry.id} className="history-entry">
