@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import RollConfig from './components/RollConfig'
+import DiceArena from './components/DiceArena'
 import { rollDice, rollWithAdvantage, rollWithDisadvantage, calculateTotal, formatNotation } from './utils/rollLogic'
 import './App.css'
 
@@ -47,7 +48,7 @@ export default function App() {
         <p className="app-subtitle">Roll the bones</p>
       </header>
       <RollConfig config={config} onChange={updateConfig} onRoll={handleRoll} rolling={rolling} />
-      {result && <pre style={{color:'lime',fontSize:'0.7rem'}}>{JSON.stringify(result,null,2)}</pre>}
+      <DiceArena result={result} rolling={rolling} />
     </div>
   )
 }
