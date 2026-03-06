@@ -1,0 +1,34 @@
+.history-log { max-height: 200px; overflow-y: auto; }
+
+.history-label {
+  font-size: 0.55rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--fg-gold-dim);
+  font-family: monospace;
+  margin-bottom: 0.75rem;
+}
+
+.history-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.history-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: var(--fg-parchment-dim);
+  padding: 0.25rem 0;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+}
+
+.history-notation { color: var(--fg-gold-dim); min-width: 6ch; }
+.history-arrow { color: var(--fg-gold-faint); }
+.history-total { color: var(--fg-parchment); font-size: 1rem; min-width: 3ch; }
+.history-chips { color: var(--fg-gold-dim); font-size: 0.75rem; }
+.history-dropped { color: rgba(201, 168, 76, 0.3); font-size: 0.7rem; }
