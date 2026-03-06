@@ -47,20 +47,21 @@ function setupFaceTexturing(geometry, trianglesPerFace) {
       const base = (startVert + tri * 3) * 2
 
       if (trianglesPerFace === 1) {
-        // Single triangle face — equilateral triangle UV
-        uvArray[base + 0] = 0.5;  uvArray[base + 1] = 0.92
-        uvArray[base + 2] = 0.05; uvArray[base + 3] = 0.08
-        uvArray[base + 4] = 0.95; uvArray[base + 5] = 0.08
+        // Equilateral triangle with centroid at UV (0.5, 0.5)
+        // v0 top, v1 bottom-left, v2 bottom-right — circumradius 0.44
+        uvArray[base + 0] = 0.5;   uvArray[base + 1] = 0.94
+        uvArray[base + 2] = 0.119; uvArray[base + 3] = 0.28
+        uvArray[base + 4] = 0.881; uvArray[base + 5] = 0.28
       } else if (trianglesPerFace === 2) {
-        // Two-triangle face (d10) — map both to fill a kite area
+        // Diamond centered at UV (0.5, 0.5) — top half + bottom half
         if (tri === 0) {
-          uvArray[base + 0] = 0.5;  uvArray[base + 1] = 0.95
-          uvArray[base + 2] = 0.05; uvArray[base + 3] = 0.5
-          uvArray[base + 4] = 0.95; uvArray[base + 5] = 0.95
+          uvArray[base + 0] = 0.5;  uvArray[base + 1] = 0.95  // top
+          uvArray[base + 2] = 0.05; uvArray[base + 3] = 0.5   // left
+          uvArray[base + 4] = 0.95; uvArray[base + 5] = 0.5   // right
         } else {
-          uvArray[base + 0] = 0.95; uvArray[base + 1] = 0.95
-          uvArray[base + 2] = 0.05; uvArray[base + 3] = 0.5
-          uvArray[base + 4] = 0.95; uvArray[base + 5] = 0.05
+          uvArray[base + 0] = 0.5;  uvArray[base + 1] = 0.05  // bottom
+          uvArray[base + 2] = 0.05; uvArray[base + 3] = 0.5   // left
+          uvArray[base + 4] = 0.95; uvArray[base + 5] = 0.5   // right
         }
       } else {
         // Three-triangle pentagon face (d12) — fan from center
