@@ -1,9 +1,27 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-body: #0d0b08;
+  --bg-surface: #1a1610;
+  --bg-panel: #211d14;
+  --fg-gold: #c9a84c;
+  --fg-gold-dim: rgba(201, 168, 76, 0.6);
+  --fg-gold-faint: rgba(201, 168, 76, 0.25);
+  --fg-parchment: #e8d5a3;
+  --fg-parchment-dim: rgba(232, 213, 163, 0.6);
+  --border-gold: rgba(201, 168, 76, 0.25);
+  --border-gold-hover: rgba(201, 168, 76, 0.5);
+  --accent-red: #8b1a1a;
+  --accent-red-bright: #c0392b;
+  --shadow: rgba(0, 0, 0, 0.8);
 }
 
 body {
-  font-family: sans-serif;
+  font-family: 'Georgia', serif;
+  background: var(--bg-body);
+  color: var(--fg-parchment);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
+
+button { font-family: inherit; cursor: pointer; }
