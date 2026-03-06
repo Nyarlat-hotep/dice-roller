@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { getDieGeometry, getDieFaceNumbers, DIE_COLORS } from '../utils/dieGeometry'
 
-function makeFaceTexture(label, dieColor) {
+function makeFaceTexture(label, dieColor, sides) {
   const size = 512
   const canvas = document.createElement('canvas')
   canvas.width = size
@@ -21,9 +21,11 @@ function makeFaceTexture(label, dieColor) {
   ctx.fillStyle = grad
   ctx.fillRect(0, 0, size, size)
 
-  // Number — crisp, no blur
+  // d6 shows the full canvas on each square face, so needs a larger font
+  // Triangle/polygon faces show only a portion of the canvas, so 0.30 fills correctly
+  const fontFrac = sides === 6 ? 0.44 : 0.30
   ctx.fillStyle = '#ffffff'
-  ctx.font = `bold ${Math.floor(size * 0.28)}px Georgia, serif`
+  ctx.font = `bold ${Math.floor(size * fontFrac)}px Georgia, serif`
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillText(String(label), size / 2, size / 2)
@@ -62,7 +64,7 @@ export default function Die3D({ sides, value, rolling, position = [0, 0, 0], dim
 
   const materials = useMemo(() => {
     return faceNumbers.map((num) => {
-      const tex = makeFaceTexture(num, color)
+      const tex = makeFaceTexture(num, color, sides)
       return new THREE.MeshPhysicalMaterial({
         map: tex,
         emissive: new THREE.Color(color),

@@ -15,18 +15,15 @@ function createD10Geometry() {
     return [Math.cos(a) * r, -0.1, Math.sin(a) * r]
   })
   const verts = []
+  // Interleave upper and lower kite faces so consecutive triangle pairs form real kites
   for (let i = 0; i < 5; i++) {
     const n = (i + 1) % 5
-    verts.push(...topV, ...upper[i], ...upper[n])
-  }
-  for (let i = 0; i < 5; i++) {
-    const n = (i + 1) % 5
-    verts.push(...upper[i], ...lower[i], ...upper[n])
-    verts.push(...upper[n], ...lower[i], ...lower[n])
-  }
-  for (let i = 0; i < 5; i++) {
-    const n = (i + 1) % 5
-    verts.push(...botV, ...lower[n], ...lower[i])
+    // Upper kite face (apex = top): T → u_i → l_i, T → l_i → u_n
+    verts.push(...topV, ...upper[i], ...lower[i])
+    verts.push(...topV, ...lower[i], ...upper[n])
+    // Lower kite face (apex = bottom): B → l_n → u_n, B → u_n → l_i
+    verts.push(...botV, ...lower[n], ...upper[n])
+    verts.push(...botV, ...upper[n], ...lower[i])
   }
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3))
   geometry.computeVertexNormals()
@@ -53,14 +50,16 @@ function setupFaceTexturing(geometry, trianglesPerFace) {
         uvArray[base + 2] = 0.119; uvArray[base + 3] = 0.28
         uvArray[base + 4] = 0.881; uvArray[base + 5] = 0.28
       } else if (trianglesPerFace === 2) {
-        // Diamond centered at UV (0.5, 0.5) — top half + bottom half
+        // Diamond centered at UV (0.5, 0.5):
+        // tri 0: apex(top) → left-wing → opposite-apex(bottom)
+        // tri 1: apex(top) → opposite-apex(bottom) → right-wing
         if (tri === 0) {
-          uvArray[base + 0] = 0.5;  uvArray[base + 1] = 0.95  // top
+          uvArray[base + 0] = 0.5;  uvArray[base + 1] = 0.95  // apex
           uvArray[base + 2] = 0.05; uvArray[base + 3] = 0.5   // left
-          uvArray[base + 4] = 0.95; uvArray[base + 5] = 0.5   // right
+          uvArray[base + 4] = 0.5;  uvArray[base + 5] = 0.05  // opposite apex
         } else {
-          uvArray[base + 0] = 0.5;  uvArray[base + 1] = 0.05  // bottom
-          uvArray[base + 2] = 0.05; uvArray[base + 3] = 0.5   // left
+          uvArray[base + 0] = 0.5;  uvArray[base + 1] = 0.95  // apex
+          uvArray[base + 2] = 0.5;  uvArray[base + 3] = 0.05  // opposite apex
           uvArray[base + 4] = 0.95; uvArray[base + 5] = 0.5   // right
         }
       } else {
