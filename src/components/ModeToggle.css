@@ -1,0 +1,28 @@
+.mode-toggle {
+  display: flex;
+  border: 1px solid var(--border-gold);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border: none;
+  background: transparent;
+  color: var(--fg-gold-dim);
+  font-family: monospace;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  transition: all 0.15s ease;
+  border-right: 1px solid var(--border-gold);
+}
+
+.mode-btn:last-child { border-right: none; }
+
+.mode-btn:hover { color: var(--fg-gold); background: rgba(201, 168, 76, 0.05); }
+
+.mode-btn--active {
+  background: rgba(201, 168, 76, 0.15);
+  color: var(--fg-gold);
+}

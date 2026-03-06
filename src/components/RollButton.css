@@ -1,0 +1,22 @@
+.roll-btn {
+  padding: 0.6rem 2rem;
+  border-radius: 6px;
+  border: 1px solid var(--fg-gold);
+  background: rgba(201, 168, 76, 0.12);
+  color: var(--fg-gold);
+  font-family: monospace;
+  font-size: 0.9rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  transition: all 0.15s ease;
+}
+
+.roll-btn:hover:not(:disabled) {
+  background: rgba(201, 168, 76, 0.22);
+  box-shadow: 0 0 16px rgba(201, 168, 76, 0.3);
+}
+
+.roll-btn--rolling {
+  opacity: 0.5;
+  cursor: default;
+}
