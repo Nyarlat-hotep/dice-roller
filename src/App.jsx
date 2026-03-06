@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react'
 import RollConfig from './components/RollConfig'
 import DiceArena from './components/DiceArena'
+import ResultDisplay from './components/ResultDisplay'
+import HistoryLog from './components/HistoryLog'
 import { rollDice, rollWithAdvantage, rollWithDisadvantage, calculateTotal, formatNotation } from './utils/rollLogic'
 import './App.css'
 
@@ -49,6 +51,8 @@ export default function App() {
       </header>
       <RollConfig config={config} onChange={updateConfig} onRoll={handleRoll} rolling={rolling} />
       <DiceArena result={result} rolling={rolling} />
+      <ResultDisplay result={result} rolling={rolling} />
+      <HistoryLog history={history} />
     </div>
   )
 }
