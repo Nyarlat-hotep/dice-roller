@@ -7,7 +7,7 @@ export const DICE = [
   { sides: 10,  label: 'd10' },
   { sides: 12,  label: 'd12' },
   { sides: 20,  label: 'd20' },
-  { sides: 100, label: 'd%'  },
+  { sides: 100, label: 'd100'  },
 ]
 
 export default function DieSelector({ selected, onChange }) {

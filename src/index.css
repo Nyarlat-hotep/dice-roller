@@ -6,7 +6,7 @@
   --bg-panel: #1b2038;
   --fg-gold: #d4b030;
   --fg-gold-dim: rgba(212, 176, 48, 0.8);
-  --fg-gold-faint: rgba(212, 176, 48, 0.45);
+  --fg-gold-faint: rgba(212, 176, 48, 1);
   --fg-parchment: #f0e6d0;
   --fg-parchment-dim: rgba(240, 230, 208, 0.75);
   --border-gold: rgba(212, 176, 48, 0.35);

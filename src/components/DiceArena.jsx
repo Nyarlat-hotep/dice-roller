@@ -285,9 +285,6 @@ export default function DiceArena({ result, rolling }) {
   return (
     <div className="dice-arena">
       <canvas ref={canvasRef} className="dice-arena-canvas" />
-      {!result && (
-        <p className="dice-arena-hint">The bones await your command, traveller</p>
-      )}
     </div>
   )
 }
