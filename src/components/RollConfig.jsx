@@ -28,6 +28,8 @@ export default function RollConfig({ config, onChange, onRoll, rolling }) {
           formatValue={v => (v > 0 ? `+${v}` : `${v}`)}
         />
         <ModeToggle mode={mode} onChange={v => onChange({ mode: v })} />
+      </div>
+      <div className="roll-config-row">
         <RollButton onClick={onRoll} rolling={rolling} />
       </div>
     </div>

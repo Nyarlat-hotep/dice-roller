@@ -3,6 +3,15 @@ import './DiceArena.css'
 
 const PARTICLE_COUNT = 300
 const STAR_COLORS = ['#ffffff', '#e8f4ff', '#ffeedd', '#d4e8ff', '#ccddff']
+const DIE_COLORS = {
+  4:   '#e04820',
+  6:   '#3a9e48',
+  8:   '#2880d0',
+  10:  '#8848e0',
+  12:  '#c82040',
+  20:  '#d4b030',
+  100: '#6040c8',
+}
 const FORM_DURATION      = 700   // ms to show each digit before starting the next
 const HOLD_DURATION      = 2500  // ms all digits stay visible before dissipating
 const LERP_IN            = 0.04  // fraction of remaining distance closed per frame (lerp, no bounce)
@@ -50,7 +59,7 @@ function sampleDigit(label, count) {
   return lit.filter((_, i) => i % step === 0).slice(0, count)
 }
 
-export default function DiceArena({ result, rolling }) {
+export default function DiceArena({ result, rolling, dieType }) {
   const canvasRef    = useRef()
   const particlesRef = useRef(null)
   const stateRef     = useRef({
@@ -218,19 +227,32 @@ export default function DiceArena({ result, rolling }) {
     }
   }, [])
 
+  // Recolor all wander particles when die type changes
+  useEffect(() => {
+    const ps = particlesRef.current
+    if (!ps) return
+    const color = DIE_COLORS[dieType] ?? pickColor()
+    for (const p of ps) {
+      if (p.phase === 'wander' || p.phase === 'release') {
+        p.color = color
+      }
+    }
+  }, [dieType])
+
   // Reset to wander when rolling starts
   useEffect(() => {
     if (!rolling) return
     const ps = particlesRef.current
     if (!ps) return
     const st = stateRef.current
+    const color = DIE_COLORS[dieType] ?? pickColor()
     for (const p of ps) {
       p.phase = 'wander'
-      p.color = pickColor()
+      p.color = color
     }
     st.phase            = 'wander'
     st.digitAssignments = []
-  }, [rolling])
+  }, [rolling, dieType])
 
   // Trigger forming when result arrives
   useEffect(() => {
@@ -268,7 +290,7 @@ export default function DiceArena({ result, rolling }) {
         const [px, py]  = rawPixels[i] ?? [100, 100]
         ps[pi].tx       = slotCenterX + (px - 100) * scale + (Math.random() - 0.5) * 7
         ps[pi].ty       = slotCenterY + (py - 100) * scale + (Math.random() - 0.5) * 7
-        if (isDropped) ps[pi].color = '#ff5555'
+        ps[pi].color    = isDropped ? '#ff5555' : (DIE_COLORS[dieType] ?? pickColor())
       }
 
       return { indices, isDropped }
@@ -280,7 +302,7 @@ export default function DiceArena({ result, rolling }) {
     st.formingDigit     = 0
     st.formingStart     = performance.now()
     st.phase            = 'forming'
-  }, [result, rolling])
+  }, [result, rolling, dieType])
 
   return (
     <div className="dice-arena">

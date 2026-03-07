@@ -55,7 +55,7 @@ export default function App() {
         <div className="app-divider"><span>⟡</span></div>
       </header>
       <RollConfig config={config} onChange={updateConfig} onRoll={handleRoll} rolling={rolling} />
-      <DiceArena result={result} rolling={rolling} />
+      <DiceArena result={result} rolling={rolling} dieType={config.dieType} />
       <ResultDisplay result={result} rolling={rolling} />
       <HistoryLog history={history} />
     </div>
