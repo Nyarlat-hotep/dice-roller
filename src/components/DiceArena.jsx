@@ -3,10 +3,10 @@ import './DiceArena.css'
 
 const PARTICLE_COUNT = 300
 const STAR_COLORS = ['#ffffff', '#e8f4ff', '#ffeedd', '#d4e8ff', '#ccddff']
-const FORM_DURATION = 450   // ms to show each digit before starting the next
-const HOLD_DURATION = 2000  // ms all digits stay visible before dissipating
-const SPRING_IN  = 0.07
-const SPRING_OUT = 0.05
+const FORM_DURATION = 700   // ms to show each digit before starting the next
+const HOLD_DURATION = 2500  // ms all digits stay visible before dissipating
+const SPRING_IN  = 0.03
+const SPRING_OUT = 0.025
 const MAX_WANDER_SPEED = 0.8
 
 function pickColor() {
@@ -176,7 +176,7 @@ export default function DiceArena({ result, rolling }) {
           p.vy += (p.ty - p.y) * SPRING_IN * dt * 60
           p.vx *= Math.pow(0.8, dt * 60); p.vy *= Math.pow(0.8, dt * 60)
           p.x += p.vx * dt * 60; p.y += p.vy * dt * 60
-          p.opacity = Math.min(1, p.opacity + 0.04 * dt * 60)
+          p.opacity = Math.min(1, p.opacity + 0.02 * dt * 60)
           const dx = p.tx - p.x, dy = p.ty - p.y
           if (dx * dx + dy * dy < 2) {
             p.x = p.tx; p.y = p.ty; p.vx = 0; p.vy = 0
@@ -186,7 +186,7 @@ export default function DiceArena({ result, rolling }) {
         } else if (p.phase === 'formed') {
           p.x += (Math.random() - 0.5) * 0.4 * dt * 60
           p.y += (Math.random() - 0.5) * 0.4 * dt * 60
-          p.opacity = Math.min(1, p.opacity + 0.04 * dt * 60)
+          p.opacity = Math.min(1, p.opacity + 0.02 * dt * 60)
 
         } else if (p.phase === 'exit') {
           p.vx += (p.tx - p.x) * SPRING_OUT * dt * 60
@@ -194,7 +194,7 @@ export default function DiceArena({ result, rolling }) {
           p.vx *= Math.pow(0.85, dt * 60); p.vy *= Math.pow(0.85, dt * 60)
           p.x += p.vx * dt * 60; p.y += p.vy * dt * 60
           const dx = p.tx - p.x, dy = p.ty - p.y
-          p.opacity = Math.max(0, Math.min(p.baseOpacity, Math.sqrt(dx * dx + dy * dy) / 60))
+          p.opacity = Math.max(0, Math.min(p.baseOpacity, Math.sqrt(dx * dx + dy * dy) / 120))
           if (p.x < -15 || p.x > W + 15 || p.y < -15 || p.y > H + 15) {
             p.x       = 30 + Math.random() * (W - 60)
             p.y       = 30 + Math.random() * (H - 60)
