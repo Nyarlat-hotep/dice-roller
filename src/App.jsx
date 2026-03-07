@@ -31,7 +31,7 @@ export default function App() {
     }
 
     const total = calculateTotal(rolls, modifier)
-    const notation = formatNotation(config)
+    const notation = formatNotation({ ...config, sides: dieType })
     const entry = { id: Date.now(), notation, rolls, dropped, modifier, total, mode, sides: dieType }
 
     setRolling(true)
