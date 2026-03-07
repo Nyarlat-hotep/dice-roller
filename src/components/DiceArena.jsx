@@ -3,23 +3,16 @@ import './DiceArena.css'
 
 const PARTICLE_COUNT = 300
 const STAR_COLORS = ['#ffffff', '#e8f4ff', '#ffeedd', '#d4e8ff', '#ccddff']
-const FORM_DURATION = 700   // ms to show each digit before starting the next
-const HOLD_DURATION = 2500  // ms all digits stay visible before dissipating
-const SPRING_IN  = 0.065    // fast snap to digit position
-const SPRING_OUT = 0.01     // slow lazy drift toward edge
-const MAX_WANDER_SPEED = 0.8
+const FORM_DURATION      = 700   // ms to show each digit before starting the next
+const HOLD_DURATION      = 2500  // ms all digits stay visible before dissipating
+const LERP_IN            = 0.04  // fraction of remaining distance closed per frame (lerp, no bounce)
+const RELEASE_FADE_RATE  = 0.005 // opacity decrease per frame when dissolving back into cloud
+const MAX_WANDER_SPEED   = 0.8
 
 function pickColor() {
   return STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)]
 }
 
-function randomEdgePoint(W, H) {
-  const side = Math.floor(Math.random() * 4)
-  if (side === 0) return { x: Math.random() * W, y: -20 }
-  if (side === 1) return { x: W + 20,            y: Math.random() * H }
-  if (side === 2) return { x: Math.random() * W, y: H + 20 }
-  return                    { x: -20,             y: Math.random() * H }
-}
 
 function makeParticles(W, H) {
   return Array.from({ length: PARTICLE_COUNT }, () => ({
@@ -119,10 +112,10 @@ export default function DiceArena({ result, rolling }) {
           for (const { indices, isDropped } of digitAssignments) {
             if (isDropped) {
               for (const i of indices) {
-                const ep = randomEdgePoint(W, H)
-                ps[i].phase = 'exit'
-                ps[i].tx    = ep.x
-                ps[i].ty    = ep.y
+                ps[i].phase = 'release'
+                ps[i].color = pickColor()
+                ps[i].vx    = (Math.random() - 0.5) * 0.6
+                ps[i].vy    = (Math.random() - 0.5) * 0.6
               }
             }
           }
@@ -134,10 +127,9 @@ export default function DiceArena({ result, rolling }) {
         for (const { indices } of st.digitAssignments) {
           for (const i of indices) {
             if (ps[i].phase === 'formed') {
-              const ep = randomEdgePoint(W, H)
-              ps[i].phase = 'exit'
-              ps[i].tx    = ep.x
-              ps[i].ty    = ep.y
+              ps[i].phase = 'release'
+              ps[i].vx    = (Math.random() - 0.5) * 0.6
+              ps[i].vy    = (Math.random() - 0.5) * 0.6
             }
           }
         }
@@ -172,14 +164,15 @@ export default function DiceArena({ result, rolling }) {
           p.opacity = Math.min(p.baseOpacity, p.opacity + 0.01 * dt * 60)
 
         } else if (p.phase === 'converge') {
-          p.vx += (p.tx - p.x) * SPRING_IN * dt * 60
-          p.vy += (p.ty - p.y) * SPRING_IN * dt * 60
-          p.vx *= Math.pow(0.8, dt * 60); p.vy *= Math.pow(0.8, dt * 60)
-          p.x += p.vx * dt * 60; p.y += p.vy * dt * 60
-          p.opacity = Math.min(1, p.opacity + 0.02 * dt * 60)
+          // Pure lerp — closes a fixed fraction of remaining distance each frame, zero overshoot
+          const lf = 1 - Math.pow(1 - LERP_IN, dt * 60)
+          p.x += (p.tx - p.x) * lf
+          p.y += (p.ty - p.y) * lf
+          p.vx = 0; p.vy = 0
+          p.opacity = Math.min(1, p.opacity + 0.015 * dt * 60)
           const dx = p.tx - p.x, dy = p.ty - p.y
-          if (dx * dx + dy * dy < 2) {
-            p.x = p.tx; p.y = p.ty; p.vx = 0; p.vy = 0
+          if (dx * dx + dy * dy < 0.25) {
+            p.x = p.tx; p.y = p.ty
             p.phase = 'formed'
           }
 
@@ -188,22 +181,21 @@ export default function DiceArena({ result, rolling }) {
           p.y += (Math.random() - 0.5) * 0.4 * dt * 60
           p.opacity = Math.min(1, p.opacity + 0.02 * dt * 60)
 
-        } else if (p.phase === 'exit') {
-          p.vx += (p.tx - p.x) * SPRING_OUT * dt * 60
-          p.vy += (p.ty - p.y) * SPRING_OUT * dt * 60
-          p.vx *= Math.pow(0.92, dt * 60); p.vy *= Math.pow(0.92, dt * 60)
-          p.x += p.vx * dt * 60; p.y += p.vy * dt * 60
-          // Fade out at a constant gentle rate — smooth regardless of travel speed
-          p.opacity = Math.max(0, p.opacity - 0.007 * dt * 60)
-          if (p.opacity <= 0) {
-            p.x       = 30 + Math.random() * (W - 60)
-            p.y       = 30 + Math.random() * (H - 60)
-            p.vx      = (Math.random() - 0.5) * 0.5
-            p.vy      = (Math.random() - 0.5) * 0.5
-            p.color   = pickColor()
-            p.opacity = 0
-            p.phase   = 'wander'
-          }
+        } else if (p.phase === 'release') {
+          // Wander freely from current position — no target, just drift
+          p.vx += (Math.random() - 0.5) * 0.02 * dt * 60
+          p.vy += (Math.random() - 0.5) * 0.02 * dt * 60
+          if (p.x < 20)     p.vx += 0.04 * dt * 60
+          if (p.x > W - 20) p.vx -= 0.04 * dt * 60
+          if (p.y < 20)     p.vy += 0.04 * dt * 60
+          if (p.y > H - 20) p.vy -= 0.04 * dt * 60
+          const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy)
+          if (spd > MAX_WANDER_SPEED) { p.vx *= MAX_WANDER_SPEED / spd; p.vy *= MAX_WANDER_SPEED / spd }
+          p.x += p.vx * dt * 60
+          p.y += p.vy * dt * 60
+          // Fade back down to ambient dim level — dissolves into cloud
+          p.opacity = Math.max(p.baseOpacity, p.opacity - RELEASE_FADE_RATE * dt * 60)
+          if (p.opacity <= p.baseOpacity) p.phase = 'wander'
         }
 
         // Draw
