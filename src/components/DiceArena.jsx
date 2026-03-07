@@ -75,19 +75,23 @@ export default function DiceArena({ result, rolling }) {
     const ctx    = canvas.getContext('2d')
 
     const resize = () => {
+      if (canvas.offsetWidth === 0 || canvas.offsetHeight === 0) return
       canvas.width  = canvas.offsetWidth
       canvas.height = canvas.offsetHeight
       if (!particlesRef.current) {
         particlesRef.current = makeParticles(canvas.width, canvas.height)
       }
     }
-    resize()
-    window.addEventListener('resize', resize)
+
+    const ro = new ResizeObserver(resize)
+    ro.observe(canvas)
+    resize() // also call immediately in case already laid out
 
     let lastTime = performance.now()
 
     function tick(now) {
       rafRef.current = requestAnimationFrame(tick)
+      const dt = Math.min((now - lastTime) / 1000, 0.05) // seconds, capped at 50ms
       lastTime = now
 
       const W  = canvas.width
@@ -109,9 +113,7 @@ export default function DiceArena({ result, rolling }) {
           for (const i of digitAssignments[st.formingDigit].indices) {
             ps[i].phase = 'converge'
           }
-        }
-
-        if (st.formingDigit >= digitAssignments.length - 1 && elapsed > FORM_DURATION) {
+        } else if (st.formingDigit >= digitAssignments.length - 1 && elapsed > FORM_DURATION) {
           st.phase     = 'hold'
           st.holdStart = now
           for (const { indices, isDropped } of digitAssignments) {
@@ -142,7 +144,12 @@ export default function DiceArena({ result, rolling }) {
       }
 
       if (st.phase === 'dissipate') {
-        const allDone = st.digitAssignments.flatMap(d => d.indices).every(i => ps[i].phase === 'wander')
+        let allDone = true
+        outer: for (const { indices } of st.digitAssignments) {
+          for (const i of indices) {
+            if (ps[i].phase !== 'wander') { allDone = false; break outer }
+          }
+        }
         if (allDone) {
           st.phase            = 'wander'
           st.digitAssignments = []
@@ -152,24 +159,24 @@ export default function DiceArena({ result, rolling }) {
       // Update + draw each particle
       for (const p of ps) {
         if (p.phase === 'wander') {
-          p.vx += (Math.random() - 0.5) * 0.02
-          p.vy += (Math.random() - 0.5) * 0.02
-          if (p.x < 20)      p.vx += 0.04
-          if (p.x > W - 20)  p.vx -= 0.04
-          if (p.y < 20)      p.vy += 0.04
-          if (p.y > H - 20)  p.vy -= 0.04
+          p.vx += (Math.random() - 0.5) * 0.02 * dt * 60
+          p.vy += (Math.random() - 0.5) * 0.02 * dt * 60
+          if (p.x < 20)      p.vx += 0.04 * dt * 60
+          if (p.x > W - 20)  p.vx -= 0.04 * dt * 60
+          if (p.y < 20)      p.vy += 0.04 * dt * 60
+          if (p.y > H - 20)  p.vy -= 0.04 * dt * 60
           const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy)
           if (spd > MAX_WANDER_SPEED) { p.vx *= MAX_WANDER_SPEED / spd; p.vy *= MAX_WANDER_SPEED / spd }
-          p.x += p.vx
-          p.y += p.vy
-          p.opacity = Math.min(p.baseOpacity, p.opacity + 0.01)
+          p.x += p.vx * dt * 60
+          p.y += p.vy * dt * 60
+          p.opacity = Math.min(p.baseOpacity, p.opacity + 0.01 * dt * 60)
 
         } else if (p.phase === 'converge') {
-          p.vx += (p.tx - p.x) * SPRING_IN
-          p.vy += (p.ty - p.y) * SPRING_IN
-          p.vx *= 0.8; p.vy *= 0.8
-          p.x += p.vx; p.y += p.vy
-          p.opacity = Math.min(1, p.opacity + 0.04)
+          p.vx += (p.tx - p.x) * SPRING_IN * dt * 60
+          p.vy += (p.ty - p.y) * SPRING_IN * dt * 60
+          p.vx *= Math.pow(0.8, dt * 60); p.vy *= Math.pow(0.8, dt * 60)
+          p.x += p.vx * dt * 60; p.y += p.vy * dt * 60
+          p.opacity = Math.min(1, p.opacity + 0.04 * dt * 60)
           const dx = p.tx - p.x, dy = p.ty - p.y
           if (dx * dx + dy * dy < 2) {
             p.x = p.tx; p.y = p.ty; p.vx = 0; p.vy = 0
@@ -177,15 +184,15 @@ export default function DiceArena({ result, rolling }) {
           }
 
         } else if (p.phase === 'formed') {
-          p.x += (Math.random() - 0.5) * 0.4
-          p.y += (Math.random() - 0.5) * 0.4
-          p.opacity = Math.min(1, p.opacity + 0.04)
+          p.x += (Math.random() - 0.5) * 0.4 * dt * 60
+          p.y += (Math.random() - 0.5) * 0.4 * dt * 60
+          p.opacity = Math.min(1, p.opacity + 0.04 * dt * 60)
 
         } else if (p.phase === 'exit') {
-          p.vx += (p.tx - p.x) * SPRING_OUT
-          p.vy += (p.ty - p.y) * SPRING_OUT
-          p.vx *= 0.85; p.vy *= 0.85
-          p.x += p.vx; p.y += p.vy
+          p.vx += (p.tx - p.x) * SPRING_OUT * dt * 60
+          p.vy += (p.ty - p.y) * SPRING_OUT * dt * 60
+          p.vx *= Math.pow(0.85, dt * 60); p.vy *= Math.pow(0.85, dt * 60)
+          p.x += p.vx * dt * 60; p.y += p.vy * dt * 60
           const dx = p.tx - p.x, dy = p.ty - p.y
           p.opacity = Math.max(0, Math.min(p.baseOpacity, Math.sqrt(dx * dx + dy * dy) / 60))
           if (p.x < -15 || p.x > W + 15 || p.y < -15 || p.y > H + 15) {
@@ -215,7 +222,7 @@ export default function DiceArena({ result, rolling }) {
     rafRef.current = requestAnimationFrame(tick)
     return () => {
       cancelAnimationFrame(rafRef.current)
-      window.removeEventListener('resize', resize)
+      ro.disconnect()
     }
   }, [])
 
