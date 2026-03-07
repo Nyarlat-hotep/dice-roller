@@ -5,8 +5,8 @@ const PARTICLE_COUNT = 300
 const STAR_COLORS = ['#ffffff', '#e8f4ff', '#ffeedd', '#d4e8ff', '#ccddff']
 const FORM_DURATION = 700   // ms to show each digit before starting the next
 const HOLD_DURATION = 2500  // ms all digits stay visible before dissipating
-const SPRING_IN  = 0.03
-const SPRING_OUT = 0.025
+const SPRING_IN  = 0.065    // fast snap to digit position
+const SPRING_OUT = 0.01     // slow lazy drift toward edge
 const MAX_WANDER_SPEED = 0.8
 
 function pickColor() {
@@ -191,11 +191,11 @@ export default function DiceArena({ result, rolling }) {
         } else if (p.phase === 'exit') {
           p.vx += (p.tx - p.x) * SPRING_OUT * dt * 60
           p.vy += (p.ty - p.y) * SPRING_OUT * dt * 60
-          p.vx *= Math.pow(0.85, dt * 60); p.vy *= Math.pow(0.85, dt * 60)
+          p.vx *= Math.pow(0.92, dt * 60); p.vy *= Math.pow(0.92, dt * 60)
           p.x += p.vx * dt * 60; p.y += p.vy * dt * 60
-          const dx = p.tx - p.x, dy = p.ty - p.y
-          p.opacity = Math.max(0, Math.min(p.baseOpacity, Math.sqrt(dx * dx + dy * dy) / 120))
-          if (p.x < -15 || p.x > W + 15 || p.y < -15 || p.y > H + 15) {
+          // Fade out at a constant gentle rate — smooth regardless of travel speed
+          p.opacity = Math.max(0, p.opacity - 0.007 * dt * 60)
+          if (p.opacity <= 0) {
             p.x       = 30 + Math.random() * (W - 60)
             p.y       = 30 + Math.random() * (H - 60)
             p.vx      = (Math.random() - 0.5) * 0.5
