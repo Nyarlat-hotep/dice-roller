@@ -1,7 +1,7 @@
 import './ResultDisplay.css'
 
 export default function ResultDisplay({ result, rolling }) {
-  if (!result) return null
+  if (!result || rolling) return null
 
   const { rolls, dropped, modifier, total } = result
   const rollSum = rolls.reduce((s, v) => s + v, 0)
