@@ -669,7 +669,6 @@ export default function RollButton({ onClick, rolling }) {
   font-family: monospace;
   font-size: 0.9rem;
   letter-spacing: 3px;
-  text-transform: uppercase;
   transition: all 0.15s ease;
 }
 

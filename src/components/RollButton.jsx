@@ -7,7 +7,7 @@ export default function RollButton({ onClick, rolling }) {
       onClick={onClick}
       disabled={rolling}
     >
-      {rolling ? 'The bones tumble...' : 'Cast the Bones'}
+      {rolling ? 'Your fate is...' : 'Reveal my fate'}
     </button>
   )
 }

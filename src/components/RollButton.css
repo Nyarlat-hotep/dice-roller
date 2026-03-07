@@ -1,14 +1,14 @@
 .roll-btn {
   padding: 0.65rem 2.2rem;
-  border-radius: 6px;
+  border-radius: 25px;
   border: 1px solid rgba(192, 32, 64, 0.8);
   background: rgba(192, 32, 64, 0.18);
   color: var(--fg-parchment);
-  font-family: monospace;
+  font-family: Georgia, 'Times New Roman', Times, serif;
   font-size: 0.85rem;
   letter-spacing: 3px;
-  text-transform: uppercase;
   transition: all 0.2s ease;
+  text-transform: uppercase;
   box-shadow: 0 0 16px rgba(192, 32, 64, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 

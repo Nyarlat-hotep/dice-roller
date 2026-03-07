@@ -2,7 +2,7 @@
   position: relative;
   height: 320px;
   border: 1px solid var(--border-gold);
-  border-radius: 6px;
+  border-radius: 16px;
   background: radial-gradient(ellipse at center, #1e2250 0%, #0d0f1c 70%);
   overflow: hidden;
   box-shadow:

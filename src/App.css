@@ -63,7 +63,7 @@
 .panel {
   background: var(--bg-panel);
   border: 1px solid var(--border-gold);
-  border-radius: 6px;
+  border-radius: 16px;
   padding: 1.25rem;
   box-shadow:
     inset 0 1px 0 rgba(212, 176, 48, 0.08),
