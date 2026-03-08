@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Minus, Plus } from 'lucide-react'
+import { playStepperClick } from '../utils/sounds'
 import './Stepper.css'
 
 const variants = {
@@ -27,7 +28,7 @@ export default function Stepper({ label, value, onChange, min, max, formatValue 
       <div className="stepper-controls">
         <button
           className="stepper-btn"
-          onClick={() => onChange(Math.max(min, value - 1))}
+          onClick={() => { if (value > min) playStepperClick(); onChange(Math.max(min, value - 1)) }}
           disabled={value <= min}
         >
           <Minus size={14} />
@@ -50,7 +51,7 @@ export default function Stepper({ label, value, onChange, min, max, formatValue 
         </div>
         <button
           className="stepper-btn"
-          onClick={() => onChange(Math.min(max, value + 1))}
+          onClick={() => { if (value < max) playStepperClick(); onChange(Math.min(max, value + 1)) }}
           disabled={value >= max}
         >
           <Plus size={14} />

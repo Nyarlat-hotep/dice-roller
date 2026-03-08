@@ -19,7 +19,7 @@ export default function DieSelector({ selected, onChange }) {
           key={sides}
           className={`die-btn${selected === sides ? ' die-btn--active' : ''}`}
           data-sides={sides}
-          onClick={() => { playDieSelect(sides); onChange(sides) }}
+          onClick={() => { playDieSelect(); onChange(sides) }}
         >
           {label}
         </button>

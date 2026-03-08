@@ -30,19 +30,14 @@ function connect(...nodes) {
   for (let i = 0; i < nodes.length - 1; i++) nodes[i].connect(nodes[i + 1])
 }
 
-// ─── Die select — crystal tap ─────────────────────────────────────────────────
-// Pitch scales with die size: d4 is low/warm, d100 is high/bright.
-// Two harmonically related sines (root + perfect fifth) decay quickly.
+// ─── Die select — crystal tap (single consistent pitch) ───────────────────────
 
-export function playDieSelect(sides = 20) {
+export function playDieSelect() {
   if (_muted) return
   const ctx = getCtx()
   const now = ctx.currentTime
 
-  const pitchMap = { 4: 520, 6: 620, 8: 720, 10: 820, 12: 920, 20: 1020, 100: 1180 }
-  const base = pitchMap[sides] ?? 880
-
-  ;[[base, 0.13], [base * 1.5, 0.06]].forEach(([freq, vol]) => {
+  ;[[920, 0.13], [1380, 0.06]].forEach(([freq, vol]) => {
     const osc  = ctx.createOscillator()
     const gain = ctx.createGain()
     osc.type = 'sine'
@@ -53,6 +48,23 @@ export function playDieSelect(sides = 20) {
     connect(osc, gain, ctx.destination)
     osc.start(now); osc.stop(now + 0.15)
   })
+}
+
+// ─── Stepper click — soft descending pip ─────────────────────────────────────
+
+export function playStepperClick() {
+  if (_muted) return
+  const ctx = getCtx()
+  const now = ctx.currentTime
+  const osc  = ctx.createOscillator()
+  const gain = ctx.createGain()
+  osc.type = 'sine'
+  osc.frequency.setValueAtTime(540, now)
+  osc.frequency.exponentialRampToValueAtTime(280, now + 0.055)
+  gain.gain.setValueAtTime(0.09, now)
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07)
+  connect(osc, gain, ctx.destination)
+  osc.start(now); osc.stop(now + 0.08)
 }
 
 // ─── Roll cast — arcane gathering ─────────────────────────────────────────────
@@ -110,29 +122,31 @@ export function playRollCast() {
   noise.start(now); noise.stop(now + 0.41)
 }
 
-// ─── Digit form — particles crystallising ────────────────────────────────────
-// Quick arcane shimmer: three sines in a minor-ish cluster, staggered slightly.
-// Plays once per digit as its particles start converging.
+// ─── Digit form — sparkle twinkle ────────────────────────────────────────────
+// 6 high sines at random pitches, randomly staggered, fast attack, quick decay.
+// Each call sounds like a handful of fairy-dust particles crystallising.
 
 export function playDigitForm() {
   if (_muted) return
   const ctx = getCtx()
   const now = ctx.currentTime
 
-  // Eb minor shimmer (arcane / mysterious)
-  const freqs = [622.25, 739.99, 932.33]
-  freqs.forEach((freq, i) => {
+  for (let i = 0; i < 6; i++) {
+    const freq = 1400 + Math.random() * 2600   // 1.4 kHz – 4 kHz
+    const t    = now + Math.random() * 0.07    // stagger up to 70 ms
+    const vol  = 0.04 + Math.random() * 0.04   // gentle, varied brightness
     const osc  = ctx.createOscillator()
     const gain = ctx.createGain()
     osc.type = 'sine'
     osc.frequency.value = freq
-    const t = now + i * 0.018
+    // Tiny upward pitch flick for that twinkling quality
+    osc.frequency.linearRampToValueAtTime(freq * 1.06, t + 0.015)
     gain.gain.setValueAtTime(0.0, t)
-    gain.gain.linearRampToValueAtTime(0.07, t + 0.012)
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.24)
+    gain.gain.linearRampToValueAtTime(vol, t + 0.005)
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.09 + Math.random() * 0.10)
     connect(osc, gain, ctx.destination)
-    osc.start(t); osc.stop(t + 0.26)
-  })
+    osc.start(t); osc.stop(t + 0.22)
+  }
 }
 
 // ─── Result reveal — all digits formed ───────────────────────────────────────
