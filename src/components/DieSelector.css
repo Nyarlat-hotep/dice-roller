@@ -10,6 +10,12 @@
     flex-wrap: nowrap;
     overflow-x: auto;
     justify-content: flex-start;
+    /* pull out to panel border, overriding its 1.25rem padding */
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+    /* small inner padding so buttons clear the rounded corners */
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
     padding-bottom: 0.25rem;
     scrollbar-width: none;
   }
