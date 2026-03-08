@@ -1,5 +1,9 @@
 .roll-config { display: flex; flex-direction: column; gap: 2rem; }
 
+@media (max-width: 600px) {
+  .roll-config { gap: 1.25rem; }
+}
+
 .roll-config-row {
   display: flex;
   align-items: center;

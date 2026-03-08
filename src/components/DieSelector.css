@@ -5,6 +5,22 @@
   justify-content: center;
 }
 
+@media (max-width: 600px) {
+  .die-selector {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-bottom: 0.25rem;
+    scrollbar-width: none;
+  }
+  .die-selector::-webkit-scrollbar {
+    display: none;
+  }
+  .die-btn {
+    flex-shrink: 0;
+  }
+}
+
 .die-btn {
   padding: 0.4rem 0.8rem;
   border-radius: 5px;
