@@ -8,7 +8,7 @@ export default function ResultDisplay({ result, rolling }) {
   const rollSum = rolls.reduce((s, v) => s + v, 0)
 
   return (
-    <div className={`result-display${rolling ? ' result-display--rolling' : ''}`}>
+    <div className="result-display">
       <div className="result-fate-label">the fates decree</div>
       <div className="result-total">{total}</div>
       <div className="result-breakdown">

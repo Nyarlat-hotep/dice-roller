@@ -1,8 +1,7 @@
 import { useRef, useEffect } from 'react'
 import './DiceArena.css'
 
-const PARTICLE_COUNT        = 300
-const PARTICLE_COUNT_MOBILE = 500
+const PARTICLE_COUNT = 300
 const STAR_COLORS = ['#ffffff', '#e8f4ff', '#ffeedd', '#d4e8ff', '#ccddff']
 const DIE_COLORS = {
   4:   '#e04820',
@@ -26,8 +25,7 @@ function pickColor() {
 
 function makeParticles(W, H) {
   const mobile = W < 600
-  const count  = mobile ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT
-  return Array.from({ length: count }, () => ({
+  return Array.from({ length: PARTICLE_COUNT }, () => ({
     x: Math.random() * W,
     y: Math.random() * H,
     vx: (Math.random() - 0.5) * 0.5,
@@ -42,14 +40,15 @@ function makeParticles(W, H) {
   }))
 }
 
-function sampleDigit(label, count) {
+function sampleDigit(label, count, mobile = false) {
   const size = 200
   const ofc = document.createElement('canvas')
   ofc.width = size; ofc.height = size
   const ctx = ofc.getContext('2d')
   const fontSize = String(label).length > 1 ? 110 : 140
   ctx.fillStyle = '#fff'
-  ctx.font = `bold ${fontSize}px Georgia, serif`
+  // heavier font weight on mobile fills strokes more densely with the same particle count
+  ctx.font = `${mobile ? 900 : 'bold'} ${fontSize}px Georgia, serif`
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillText(String(label), size / 2, size / 2)
@@ -290,9 +289,9 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
     const assignments = allDigits.map(({ value, isDropped }, d) => {
       const slotCenterX = slotW * d + slotW / 2
       const slotCenterY = H / 2
-      const scale       = Math.min(slotW, H) * 0.42 / 100
+      const scale       = Math.min(slotW, H) * (W < 600 ? 0.55 : 0.42) / 100
 
-      const rawPixels = sampleDigit(value, perDigit)
+      const rawPixels = sampleDigit(value, perDigit, W < 600)
       const startIdx  = d * perDigit
       const indices   = Array.from({ length: perDigit }, (_, i) => startIdx + i)
 
