@@ -1,3 +1,4 @@
+import { playDieSelect } from '../utils/sounds'
 import './DieSelector.css'
 
 export const DICE = [
@@ -18,7 +19,7 @@ export default function DieSelector({ selected, onChange }) {
           key={sides}
           className={`die-btn${selected === sides ? ' die-btn--active' : ''}`}
           data-sides={sides}
-          onClick={() => onChange(sides)}
+          onClick={() => { playDieSelect(sides); onChange(sides) }}
         >
           {label}
         </button>

@@ -9,8 +9,26 @@
 }
 
 .app-header {
+  position: relative;
   text-align: center;
   padding-bottom: 0.5rem;
+}
+
+.mute-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  color: var(--fg-gold-faint);
+  cursor: pointer;
+  padding: 0.25rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.mute-btn:hover {
+  opacity: 1;
 }
 
 .app-eyebrow {

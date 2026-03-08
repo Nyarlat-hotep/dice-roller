@@ -1,7 +1,9 @@
 import { useRef, useEffect } from 'react'
+import { playDigitForm, playResultReveal } from '../utils/sounds'
 import './DiceArena.css'
 
-const PARTICLE_COUNT = 300
+const PARTICLE_COUNT        = 300
+const PARTICLE_COUNT_MOBILE = 500
 const STAR_COLORS = ['#ffffff', '#e8f4ff', '#ffeedd', '#d4e8ff', '#ccddff']
 const DIE_COLORS = {
   4:   '#e04820',
@@ -23,9 +25,10 @@ function pickColor() {
 }
 
 
-function makeParticles(W, H) {
+function makeParticles(W, H, count) {
   const mobile = W < 600
-  return Array.from({ length: PARTICLE_COUNT }, () => ({
+  const n = count ?? (mobile ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT)
+  return Array.from({ length: n }, () => ({
     x: Math.random() * W,
     y: Math.random() * H,
     vx: (Math.random() - 0.5) * 0.5,
@@ -118,9 +121,11 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
           for (const i of digitAssignments[st.formingDigit].indices) {
             ps[i].phase = 'converge'
           }
+          playDigitForm()
         } else if (st.formingDigit >= digitAssignments.length - 1 && elapsed > FORM_DURATION) {
           st.phase     = 'hold'
           st.holdStart = now
+          playResultReveal()
           // Dropped digits stay visible (red) through hold, released together with kept at hold end
         }
       }
@@ -151,7 +156,7 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
         }
       }
 
-      // Update + draw each particle
+      // Update each particle
       for (const p of ps) {
         if (p.phase === 'wander') {
           p.vx += (Math.random() - 0.5) * 0.02 * dt * 60
@@ -167,7 +172,6 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
           p.opacity = Math.min(p.baseOpacity, p.opacity + 0.01 * dt * 60)
 
         } else if (p.phase === 'converge') {
-          // Pure lerp — closes a fixed fraction of remaining distance each frame, zero overshoot
           const lf = 1 - Math.pow(1 - LERP_IN, dt * 60)
           p.x += (p.tx - p.x) * lf
           p.y += (p.ty - p.y) * lf
@@ -186,7 +190,6 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
           p.opacity = Math.min(1, p.opacity + 0.02 * dt * 60)
 
         } else if (p.phase === 'release') {
-          // Wander freely from current position — no target, just drift
           p.vx += (Math.random() - 0.5) * 0.02 * dt * 60
           p.vy += (Math.random() - 0.5) * 0.02 * dt * 60
           if (p.x < 20)     p.vx += 0.04 * dt * 60
@@ -197,25 +200,26 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
           if (spd > MAX_WANDER_SPEED) { p.vx *= MAX_WANDER_SPEED / spd; p.vy *= MAX_WANDER_SPEED / spd }
           p.x += p.vx * dt * 60
           p.y += p.vy * dt * 60
-          // Fade back down to ambient dim level — dissolves into cloud
           p.opacity = Math.max(p.baseOpacity, p.opacity - RELEASE_FADE_RATE * dt * 60)
           if (p.opacity <= p.baseOpacity) {
             p.phase = 'wander'
             p.color = DIE_COLORS[dieTypeRef.current] ?? pickColor()
           }
         }
+      }
 
-        // Draw
-        ctx.save()
-        ctx.globalAlpha = Math.max(0, Math.min(1, p.opacity))
-        ctx.shadowColor = p.color
-        ctx.shadowBlur  = p.size * (W < 600 ? 18 : 10)
+      // Draw — sharp dots, no glow
+      ctx.globalCompositeOperation = 'source-over'
+      for (const p of ps) {
+        const a = Math.max(0, Math.min(1, p.opacity))
+        if (a < 0.01) continue
+        ctx.globalAlpha = a
         ctx.fillStyle   = p.color
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
         ctx.fill()
-        ctx.restore()
       }
+      ctx.globalAlpha = 1
     }
 
     rafRef.current = requestAnimationFrame(tick)
@@ -284,12 +288,27 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
 
     const totalSlots = allDigits.length
     const slotW      = W / totalSlots
-    const perDigit   = Math.floor(ps.length / totalSlots)
+    const scale      = Math.min(slotW, H) * (W < 600 ? 0.55 : 0.42) / 100
+
+    // Scale particle count up as digits shrink — more particles needed for smaller glyphs
+    const perDigitTarget = W < 600 ? 180 : 200
+    const needed         = Math.min(totalSlots * perDigitTarget, W < 600 ? 900 : 700)
+    if (ps.length < needed) {
+      particlesRef.current = makeParticles(W, H, needed)
+    }
+    const psActive = particlesRef.current
+    const perDigit = Math.floor(psActive.length / totalSlots)
+
+    // Particle size shrinks with the digit scale so dots fit within tighter strokes
+    const maxScale   = (W < 600 ? 0.55 : 0.42) * Math.min(W, H) / 100  // single-die reference scale
+    const sizeFactor = Math.max(0.35, Math.min(1, scale / maxScale))
+    const digitSize  = W < 600
+      ? 0.65
+      : Math.max(0.4, 1.8 * sizeFactor)
 
     const assignments = allDigits.map(({ value, isDropped }, d) => {
       const slotCenterX = slotW * d + slotW / 2
       const slotCenterY = H / 2
-      const scale       = Math.min(slotW, H) * (W < 600 ? 0.55 : 0.42) / 100
 
       const rawPixels = sampleDigit(value, perDigit, W < 600)
       const startIdx  = d * perDigit
@@ -298,21 +317,23 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
       for (let i = 0; i < indices.length; i++) {
         const pi        = indices[i]
         const [px, py]  = rawPixels[i] ?? [100, 100]
-        const jitter    = W < 600 ? 2 : 7
-        ps[pi].tx       = slotCenterX + (px - 100) * scale + (Math.random() - 0.5) * jitter
-        ps[pi].ty       = slotCenterY + (py - 100) * scale + (Math.random() - 0.5) * jitter
-        ps[pi].color    = isDropped ? '#ff5555' : (DIE_COLORS[dieTypeRef.current] ?? pickColor())
+        const jitter    = W < 600 ? 2 : Math.max(2, 7 * sizeFactor)
+        psActive[pi].tx    = slotCenterX + (px - 100) * scale + (Math.random() - 0.5) * jitter
+        psActive[pi].ty    = slotCenterY + (py - 100) * scale + (Math.random() - 0.5) * jitter
+        psActive[pi].color = isDropped ? '#ff5555' : (DIE_COLORS[dieTypeRef.current] ?? pickColor())
+        psActive[pi].size  = digitSize * (0.4 + Math.random() * 1.2)
       }
 
       return { indices, isDropped }
     })
 
-    for (const i of assignments[0].indices) ps[i].phase = 'converge'
+    for (const i of assignments[0].indices) psActive[i].phase = 'converge'
 
     st.digitAssignments = assignments
     st.formingDigit     = 0
     st.formingStart     = performance.now()
     st.phase            = 'forming'
+    playDigitForm()
   }, [result, rolling])
 
   return (

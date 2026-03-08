@@ -1,4 +1,6 @@
 import { useState, useCallback } from 'react'
+import { Volume2, VolumeX } from 'lucide-react'
+import { getMuted, setMuted, playRollCast } from './utils/sounds'
 import RollConfig from './components/RollConfig'
 import DiceArena from './components/DiceArena'
 import ResultDisplay from './components/ResultDisplay'
@@ -13,10 +15,18 @@ export default function App() {
   const [rolling, setRolling] = useState(false)
   const [result, setResult] = useState(null)
   const [history, setHistory] = useState([])
+  const [muted, setMutedState] = useState(() => getMuted())
 
   const updateConfig = useCallback((patch) => setConfig(c => ({ ...c, ...patch })), [])
 
+  const toggleMute = useCallback(() => {
+    const next = !muted
+    setMuted(next)
+    setMutedState(next)
+  }, [muted])
+
   const handleRoll = useCallback(() => {
+    playRollCast()
     const { dieType, count, modifier, mode } = config
     let rolls, dropped = null
 
@@ -48,6 +58,9 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
+        <button className="mute-btn" onClick={toggleMute} aria-label={muted ? 'Unmute' : 'Mute'}>
+          {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+        </button>
         <p className="app-eyebrow">✦ Tome of Fortune ✦</p>
         <h1 className="app-title">Roll the dice</h1>
         <p className="app-subtitle">May they be merciful, traveller</p>
