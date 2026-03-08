@@ -30,7 +30,7 @@ function makeParticles(W, H) {
     y: Math.random() * H,
     vx: (Math.random() - 0.5) * 0.5,
     vy: (Math.random() - 0.5) * 0.5,
-    size: mobile ? Math.random() * 0.6 + 0.3 : Math.random() * 1.5 + 0.5,
+    size: mobile ? Math.random() * 0.25 + 0.1 : Math.random() * 1.5 + 0.5,
     baseOpacity: Math.random() * 0.3 + 0.6,
     opacity: 0,
     color: pickColor(),
