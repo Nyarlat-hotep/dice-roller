@@ -3,7 +3,7 @@
   letter-spacing: 4px;
   text-transform: uppercase;
   color: var(--fg-gold-faint);
-  font-family: monospace;
+  font-family: Georgia, 'Times New Roman', Times, serif;
   margin-bottom: 0.4rem;
 }
 
@@ -21,6 +21,7 @@
   color: var(--fg-gold);
   line-height: 1;
   text-shadow: 0 0 24px rgba(201, 168, 76, 0.4);
+  margin-bottom: 1.5rem;
 }
 
 .result-breakdown {
@@ -49,5 +50,6 @@
   text-decoration: line-through;
 }
 
-.result-sum, .result-modifier { color: var(--fg-gold-dim); }
+.result-arrow { color: var(--fg-gold); margin: 0 0.35rem; }
+.result-sum, .result-modifier { color: var(--fg-gold-dim); display: flex; align-items: center; }
 .result-dropped { color: rgba(201, 168, 76, 0.4); }

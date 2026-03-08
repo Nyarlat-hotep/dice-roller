@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react'
 import './ResultDisplay.css'
 
 export default function ResultDisplay({ result, rolling }) {
@@ -17,11 +18,11 @@ export default function ResultDisplay({ result, rolling }) {
           ))}
         </span>
         {rolls.length > 1 && (
-          <span className="result-sum"> = {rollSum}</span>
+          <span className="result-sum"><ArrowRight size={12} className="result-arrow" />{rollSum}</span>
         )}
         {modifier !== 0 && (
           <span className="result-modifier">
-            {modifier > 0 ? ` + ${modifier}` : ` − ${Math.abs(modifier)}`} = {total}
+            {modifier > 0 ? `+ ${modifier}` : `− ${Math.abs(modifier)}`}<ArrowRight size={12} className="result-arrow" />{total}
           </span>
         )}
         {dropped && dropped.length > 0 && (

@@ -1,4 +1,4 @@
-.roll-config { display: flex; flex-direction: column; gap: 1rem; }
+.roll-config { display: flex; flex-direction: column; gap: 2rem; }
 
 .roll-config-row {
   display: flex;

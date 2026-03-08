@@ -1,7 +1,29 @@
-.history-log { max-height: 200px; overflow-y: auto; }
+.history-log {
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 168, 76, 0.25) transparent;
+}
+
+.history-log::-webkit-scrollbar {
+  width: 4px;
+}
+
+.history-log::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.history-log::-webkit-scrollbar-thumb {
+  background: rgba(201, 168, 76, 0.25);
+  border-radius: 2px;
+}
+
+.history-log::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 168, 76, 0.45);
+}
 
 .history-label {
-  font-size: 0.55rem;
+  font-size: 0.75rem;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--fg-gold-dim);

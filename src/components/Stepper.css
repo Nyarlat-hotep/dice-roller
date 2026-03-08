@@ -26,12 +26,10 @@
   border: 1px solid var(--border-gold);
   background: transparent;
   color: var(--fg-gold);
-  font-size: 1.1rem;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.15s ease;
-  line-height: 1;
 }
 
 .stepper-btn:hover:not(:disabled) {
@@ -44,10 +42,62 @@
   cursor: default;
 }
 
-.stepper-value {
+.stepper-value-wrapper {
+  position: relative;
   min-width: 3ch;
+  height: 1.2em;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepper-value {
+  position: absolute;
+  width: 100%;
   text-align: center;
   font-family: monospace;
   font-size: 1rem;
   color: var(--fg-parchment);
+  line-height: 1;
+}
+
+/* Old number exits upward (increment) */
+.stepper-value--exit-up {
+  animation: exit-up 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Old number exits downward (decrement) */
+.stepper-value--exit-down {
+  animation: exit-down 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* New number enters from below (increment) */
+.stepper-value--enter-up {
+  animation: enter-up 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* New number enters from above (decrement) */
+.stepper-value--enter-down {
+  animation: enter-down 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes exit-up {
+  from { transform: translateY(0);     opacity: 1; }
+  to   { transform: translateY(-120%); opacity: 0; }
+}
+
+@keyframes exit-down {
+  from { transform: translateY(0);    opacity: 1; }
+  to   { transform: translateY(120%); opacity: 0; }
+}
+
+@keyframes enter-up {
+  from { transform: translateY(120%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes enter-down {
+  from { transform: translateY(-120%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
 }

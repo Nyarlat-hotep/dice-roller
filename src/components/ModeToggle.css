@@ -1,28 +1,44 @@
 .mode-toggle {
+  position: relative;
   display: flex;
+  background: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--border-gold);
-  border-radius: 6px;
-  overflow: hidden;
+  border-radius: 999px;
+  padding: 4px;
+  gap: 2px;
+}
+
+/* Sliding indicator — positioned via JS to exactly match the active button */
+.mode-indicator {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 999px;
+  background: rgba(201, 168, 76, 0.18);
+  box-shadow: 0 0 10px rgba(201, 168, 76, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: left 0.22s ease, width 0.22s ease;
+  pointer-events: none;
 }
 
 .mode-btn {
+  position: relative;
+  z-index: 1;
   flex: 1;
-  padding: 0.4rem 0.6rem;
+  padding: 0.35rem 1.3rem;
   border: none;
+  border-radius: 999px;
   background: transparent;
   color: var(--fg-gold-dim);
   font-family: monospace;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   letter-spacing: 1.5px;
-  transition: all 0.15s ease;
-  border-right: 1px solid var(--border-gold);
+  text-indent: 1.5px;
+  transition: color 0.18s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.mode-btn:last-child { border-right: none; }
-
-.mode-btn:hover { color: var(--fg-gold); background: rgba(201, 168, 76, 0.05); }
-
-.mode-btn--active {
-  background: rgba(201, 168, 76, 0.15);
-  color: var(--fg-gold);
-}
+.mode-btn:hover { color: var(--fg-gold); }
+.mode-btn--active { color: var(--fg-gold); }

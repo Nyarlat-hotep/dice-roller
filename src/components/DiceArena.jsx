@@ -30,7 +30,7 @@ function makeParticles(W, H) {
     vx: (Math.random() - 0.5) * 0.5,
     vy: (Math.random() - 0.5) * 0.5,
     size: Math.random() * 1.5 + 0.5,
-    baseOpacity: Math.random() * 0.4 + 0.25,
+    baseOpacity: Math.random() * 0.3 + 0.6,
     opacity: 0,
     color: pickColor(),
     tx: null,
@@ -59,9 +59,10 @@ function sampleDigit(label, count) {
   return lit.filter((_, i) => i % step === 0).slice(0, count)
 }
 
-export default function DiceArena({ result, rolling, dieType }) {
+export default function DiceArena({ result, rolling, dieType, mode }) {
   const canvasRef    = useRef()
   const particlesRef = useRef(null)
+  const dieTypeRef   = useRef(dieType)
   const stateRef     = useRef({
     phase: 'wander',
     digitAssignments: [],
@@ -118,16 +119,7 @@ export default function DiceArena({ result, rolling, dieType }) {
         } else if (st.formingDigit >= digitAssignments.length - 1 && elapsed > FORM_DURATION) {
           st.phase     = 'hold'
           st.holdStart = now
-          for (const { indices, isDropped } of digitAssignments) {
-            if (isDropped) {
-              for (const i of indices) {
-                ps[i].phase = 'release'
-                ps[i].color = pickColor()
-                ps[i].vx    = (Math.random() - 0.5) * 0.6
-                ps[i].vy    = (Math.random() - 0.5) * 0.6
-              }
-            }
-          }
+          // Dropped digits stay visible (red) through hold, released together with kept at hold end
         }
       }
 
@@ -135,7 +127,7 @@ export default function DiceArena({ result, rolling, dieType }) {
         st.phase = 'dissipate'
         for (const { indices } of st.digitAssignments) {
           for (const i of indices) {
-            if (ps[i].phase === 'formed') {
+            if (ps[i].phase === 'formed' || ps[i].phase === 'converge') {
               ps[i].phase = 'release'
               ps[i].vx    = (Math.random() - 0.5) * 0.6
               ps[i].vy    = (Math.random() - 0.5) * 0.6
@@ -211,7 +203,7 @@ export default function DiceArena({ result, rolling, dieType }) {
         ctx.save()
         ctx.globalAlpha = Math.max(0, Math.min(1, p.opacity))
         ctx.shadowColor = p.color
-        ctx.shadowBlur  = p.size * 5
+        ctx.shadowBlur  = p.size * 10
         ctx.fillStyle   = p.color
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
@@ -226,6 +218,18 @@ export default function DiceArena({ result, rolling, dieType }) {
       ro.disconnect()
     }
   }, [])
+
+  // Keep dieTypeRef current so other effects can read it without depending on it
+  useEffect(() => { dieTypeRef.current = dieType }, [dieType])
+
+  // When switching back to normal mode, recolor all particles to the die color
+  useEffect(() => {
+    if (mode !== 'normal') return
+    const ps = particlesRef.current
+    if (!ps) return
+    const color = DIE_COLORS[dieTypeRef.current] ?? pickColor()
+    for (const p of ps) p.color = color
+  }, [mode])
 
   // Recolor all wander particles when die type changes
   useEffect(() => {
@@ -245,14 +249,14 @@ export default function DiceArena({ result, rolling, dieType }) {
     const ps = particlesRef.current
     if (!ps) return
     const st = stateRef.current
-    const color = DIE_COLORS[dieType] ?? pickColor()
+    const color = DIE_COLORS[dieTypeRef.current] ?? pickColor()
     for (const p of ps) {
       p.phase = 'wander'
       p.color = color
     }
     st.phase            = 'wander'
     st.digitAssignments = []
-  }, [rolling, dieType])
+  }, [rolling])
 
   // Trigger forming when result arrives
   useEffect(() => {
@@ -290,7 +294,7 @@ export default function DiceArena({ result, rolling, dieType }) {
         const [px, py]  = rawPixels[i] ?? [100, 100]
         ps[pi].tx       = slotCenterX + (px - 100) * scale + (Math.random() - 0.5) * 7
         ps[pi].ty       = slotCenterY + (py - 100) * scale + (Math.random() - 0.5) * 7
-        ps[pi].color    = isDropped ? '#ff5555' : (DIE_COLORS[dieType] ?? pickColor())
+        ps[pi].color    = isDropped ? '#ff5555' : (DIE_COLORS[dieTypeRef.current] ?? pickColor())
       }
 
       return { indices, isDropped }
@@ -302,7 +306,7 @@ export default function DiceArena({ result, rolling, dieType }) {
     st.formingDigit     = 0
     st.formingStart     = performance.now()
     st.phase            = 'forming'
-  }, [result, rolling, dieType])
+  }, [result, rolling])
 
   return (
     <div className="dice-arena">

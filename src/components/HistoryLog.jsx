@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react'
 import './HistoryLog.css'
 
 export default function HistoryLog({ history }) {
@@ -10,7 +11,7 @@ export default function HistoryLog({ history }) {
         {history.map(entry => (
           <li key={entry.id} className="history-entry">
             <span className="history-notation">{entry.notation}</span>
-            <span className="history-arrow">→</span>
+            <ArrowRight size={12} className="history-arrow" />
             <span className="history-total">{entry.total}</span>
             <span className="history-chips">
               [{entry.rolls.join(', ')}]

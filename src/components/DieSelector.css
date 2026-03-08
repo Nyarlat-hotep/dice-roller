@@ -12,7 +12,7 @@
   background: rgba(255, 255, 255, 0.03);
   color: var(--fg-parchment-dim);
   font-family: monospace;
-  font-size: 0.85rem;
+  font-size: 1rem;
   letter-spacing: 1px;
   transition: all 0.15s ease;
 }

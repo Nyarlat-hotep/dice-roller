@@ -50,12 +50,12 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <p className="app-eyebrow">✦ Tome of Fortune ✦</p>
-        <h1 className="app-title">Roll your fate</h1>
-        <p className="app-subtitle">May the dice reveal your fate, traveller</p>
+        <h1 className="app-title">Roll the dice</h1>
+        <p className="app-subtitle">May they reveal your fate, traveller</p>
         <div className="app-divider"><span>⟡</span></div>
       </header>
       <RollConfig config={config} onChange={updateConfig} onRoll={handleRoll} rolling={rolling} />
-      <DiceArena result={result} rolling={rolling} dieType={config.dieType} />
+      <DiceArena result={result} rolling={rolling} dieType={config.dieType} mode={config.mode} />
       <ResultDisplay result={result} rolling={rolling} />
       <HistoryLog history={history} />
     </div>
