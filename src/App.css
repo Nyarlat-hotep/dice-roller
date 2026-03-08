@@ -95,3 +95,10 @@
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
   pointer-events: none;
 }
+
+@media screen and (max-width: 600px) {
+  .app-title {
+    font-size: 1.75rem;
+  }
+  
+}
