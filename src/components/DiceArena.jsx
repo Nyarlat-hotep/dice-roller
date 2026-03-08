@@ -31,7 +31,7 @@ function makeParticles(W, H) {
     vx: (Math.random() - 0.5) * 0.5,
     vy: (Math.random() - 0.5) * 0.5,
     size: mobile ? Math.random() * 0.4 + 0.2 : Math.random() * 1.5 + 0.5,
-    baseOpacity: Math.random() * 0.3 + 0.6,
+    baseOpacity: mobile ? Math.random() * 0.1 + 0.9 : Math.random() * 0.3 + 0.6,
     opacity: 0,
     color: pickColor(),
     tx: null,
@@ -208,7 +208,7 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
         ctx.save()
         ctx.globalAlpha = Math.max(0, Math.min(1, p.opacity))
         ctx.shadowColor = p.color
-        ctx.shadowBlur  = p.size * 10
+        ctx.shadowBlur  = p.size * (W < 600 ? 18 : 10)
         ctx.fillStyle   = p.color
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
