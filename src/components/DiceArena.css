@@ -29,3 +29,9 @@
   pointer-events: none;
   white-space: nowrap;
 }
+
+@media (max-width: 768px) {
+  .dice-arena {
+    height: 200px;
+  }
+}

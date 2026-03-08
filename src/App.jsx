@@ -50,7 +50,7 @@ export default function App() {
       <header className="app-header">
         <p className="app-eyebrow">✦ Tome of Fortune ✦</p>
         <h1 className="app-title">Roll the dice</h1>
-        <p className="app-subtitle">May they reveal your fate, traveller</p>
+        <p className="app-subtitle">May they be merciful, traveller</p>
         <div className="app-divider"><span>⟡</span></div>
       </header>
       <RollConfig config={config} onChange={updateConfig} onRoll={handleRoll} rolling={rolling} />
