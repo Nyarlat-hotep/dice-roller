@@ -196,7 +196,10 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
           p.y += p.vy * dt * 60
           // Fade back down to ambient dim level — dissolves into cloud
           p.opacity = Math.max(p.baseOpacity, p.opacity - RELEASE_FADE_RATE * dt * 60)
-          if (p.opacity <= p.baseOpacity) p.phase = 'wander'
+          if (p.opacity <= p.baseOpacity) {
+            p.phase = 'wander'
+            p.color = DIE_COLORS[dieTypeRef.current] ?? pickColor()
+          }
         }
 
         // Draw
