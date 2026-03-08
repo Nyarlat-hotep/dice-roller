@@ -24,12 +24,13 @@ function pickColor() {
 
 
 function makeParticles(W, H) {
+  const mobile = W < 600
   return Array.from({ length: PARTICLE_COUNT }, () => ({
     x: Math.random() * W,
     y: Math.random() * H,
     vx: (Math.random() - 0.5) * 0.5,
     vy: (Math.random() - 0.5) * 0.5,
-    size: Math.random() * 1.5 + 0.5,
+    size: mobile ? Math.random() * 0.6 + 0.3 : Math.random() * 1.5 + 0.5,
     baseOpacity: Math.random() * 0.3 + 0.6,
     opacity: 0,
     color: pickColor(),
@@ -178,8 +179,9 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
           }
 
         } else if (p.phase === 'formed') {
-          p.x += (Math.random() - 0.5) * 0.4 * dt * 60
-          p.y += (Math.random() - 0.5) * 0.4 * dt * 60
+          const wobble = W < 600 ? 0.15 : 0.4
+          p.x += (Math.random() - 0.5) * wobble * dt * 60
+          p.y += (Math.random() - 0.5) * wobble * dt * 60
           p.opacity = Math.min(1, p.opacity + 0.02 * dt * 60)
 
         } else if (p.phase === 'release') {
@@ -295,8 +297,9 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
       for (let i = 0; i < indices.length; i++) {
         const pi        = indices[i]
         const [px, py]  = rawPixels[i] ?? [100, 100]
-        ps[pi].tx       = slotCenterX + (px - 100) * scale + (Math.random() - 0.5) * 7
-        ps[pi].ty       = slotCenterY + (py - 100) * scale + (Math.random() - 0.5) * 7
+        const jitter    = W < 600 ? 2 : 7
+        ps[pi].tx       = slotCenterX + (px - 100) * scale + (Math.random() - 0.5) * jitter
+        ps[pi].ty       = slotCenterY + (py - 100) * scale + (Math.random() - 0.5) * jitter
         ps[pi].color    = isDropped ? '#ff5555' : (DIE_COLORS[dieTypeRef.current] ?? pickColor())
       }
 
