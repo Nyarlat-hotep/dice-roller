@@ -1,28 +1,25 @@
-import { useState, useLayoutEffect, useRef } from 'react'
+import { useRef } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Minus, Plus } from 'lucide-react'
 import './Stepper.css'
 
+const variants = {
+  initial: (dir) => ({ y: dir > 0 ? 20 : -20, opacity: 0 }),
+  animate:         ({ y: 0,  opacity: 1 }),
+  exit:    (dir) => ({ y: dir > 0 ? -20 : 20, opacity: 0 }),
+}
+
 export default function Stepper({ label, value, onChange, min, max, formatValue }) {
-  const [anim, setAnim] = useState({ key: 0, leaving: null, dir: 0 })
   const prevRef = useRef(value)
+  const dirRef  = useRef(0)
 
-  useLayoutEffect(() => {
-    if (value === prevRef.current) return
-    const dir  = value > prevRef.current ? 1 : -1
-    const prev = prevRef.current
+  if (value !== prevRef.current) {
+    dirRef.current = value > prevRef.current ? 1 : -1
     prevRef.current = value
+  }
 
-    setAnim(a => ({ key: a.key + 1, leaving: prev, dir }))
-
-    const t = setTimeout(() => setAnim(a => ({ ...a, leaving: null })), 750)
-    return () => clearTimeout(t)
-  }, [value])
-
+  const dir = dirRef.current
   const fmt = v => (formatValue ? formatValue(v) : v)
-  const exitClass  = anim.dir > 0 ? 'stepper-value--exit-up'   : 'stepper-value--exit-down'
-  const enterClass = anim.leaving !== null
-    ? (anim.dir > 0 ? 'stepper-value--enter-up' : 'stepper-value--enter-down')
-    : ''
 
   return (
     <div className="stepper">
@@ -36,14 +33,20 @@ export default function Stepper({ label, value, onChange, min, max, formatValue 
           <Minus size={14} />
         </button>
         <div className="stepper-value-wrapper">
-          {anim.leaving !== null && (
-            <span className={`stepper-value ${exitClass}`}>
-              {fmt(anim.leaving)}
-            </span>
-          )}
-          <span key={anim.key} className={`stepper-value ${enterClass}`}>
-            {fmt(value)}
-          </span>
+          <AnimatePresence initial={false} custom={dir}>
+            <motion.span
+              key={value}
+              className="stepper-value"
+              custom={dir}
+              variants={variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              {fmt(value)}
+            </motion.span>
+          </AnimatePresence>
         </div>
         <button
           className="stepper-btn"

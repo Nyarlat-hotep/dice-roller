@@ -34,8 +34,7 @@ export default function App() {
     const notation = formatNotation({ ...config, sides: dieType })
     const entry = { id: Date.now(), notation, rolls, dropped, modifier, total, mode, sides: dieType }
 
-    const totalSlots = rolls.length + (dropped ? dropped.length : 0)
-    const revealDelay = totalSlots * 750 + 300
+    const revealDelay = 300
 
     setRolling(true)
     setResult(entry)

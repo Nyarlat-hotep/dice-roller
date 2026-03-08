@@ -8,11 +8,11 @@ const DIE_COLORS = {
   6:   '#3a9e48',
   8:   '#2880d0',
   10:  '#8848e0',
-  12:  '#c82040',
+  12:  '#20a898',
   20:  '#d4b030',
-  100: '#6040c8',
+  100: '#c030a0',
 }
-const FORM_DURATION      = 700   // ms to show each digit before starting the next
+const FORM_DURATION      = 400   // ms to show each digit before starting the next
 const HOLD_DURATION      = 2500  // ms all digits stay visible before dissipating
 const LERP_IN            = 0.04  // fraction of remaining distance closed per frame (lerp, no bounce)
 const RELEASE_FADE_RATE  = 0.005 // opacity decrease per frame when dissolving back into cloud

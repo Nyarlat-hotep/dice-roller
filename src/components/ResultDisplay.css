@@ -24,9 +24,24 @@
   margin-bottom: 1.5rem;
 }
 
+.result-rolls {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.result-dropped {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 .result-breakdown {
-  font-family: monospace;
-  font-size: 0.8rem;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 1rem;
   color: var(--fg-parchment-dim);
   margin-top: 0.5rem;
   display: flex;
@@ -43,6 +58,7 @@
   border-radius: 4px;
   color: var(--fg-parchment);
   background: rgba(201, 168, 76, 0.07);
+  padding-bottom: 6px;
 }
 
 .result-chip--dropped {
@@ -51,5 +67,6 @@
 }
 
 .result-arrow { color: var(--fg-gold); margin: 0 0.35rem; }
+.result-mod-icon { color: var(--fg-gold-dim); margin-right: 0.15rem; flex-shrink: 0; }
 .result-sum, .result-modifier { color: var(--fg-gold-dim); display: flex; align-items: center; }
 .result-dropped { color: rgba(201, 168, 76, 0.4); }

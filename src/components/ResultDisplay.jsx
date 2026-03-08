@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Plus, Minus } from 'lucide-react'
 import './ResultDisplay.css'
 
 export default function ResultDisplay({ result, rolling }) {
@@ -22,7 +22,10 @@ export default function ResultDisplay({ result, rolling }) {
         )}
         {modifier !== 0 && (
           <span className="result-modifier">
-            {modifier > 0 ? `+ ${modifier}` : `− ${Math.abs(modifier)}`}<ArrowRight size={12} className="result-arrow" />{total}
+            {modifier > 0
+              ? <><Plus size={11} className="result-mod-icon" />{modifier}</>
+              : <><Minus size={11} className="result-mod-icon" />{Math.abs(modifier)}</>
+            }<ArrowRight size={12} className="result-arrow" />{total}
           </span>
         )}
         {dropped && dropped.length > 0 && (

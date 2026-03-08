@@ -10,7 +10,7 @@
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--fg-gold-dim);
-  font-family: monospace;
+  font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .stepper-controls {
@@ -62,42 +62,3 @@
   line-height: 1;
 }
 
-/* Old number exits upward (increment) */
-.stepper-value--exit-up {
-  animation: exit-up 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-/* Old number exits downward (decrement) */
-.stepper-value--exit-down {
-  animation: exit-down 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-/* New number enters from below (increment) */
-.stepper-value--enter-up {
-  animation: enter-up 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-}
-
-/* New number enters from above (decrement) */
-.stepper-value--enter-down {
-  animation: enter-down 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-}
-
-@keyframes exit-up {
-  from { transform: translateY(0);     opacity: 1; }
-  to   { transform: translateY(-120%); opacity: 0; }
-}
-
-@keyframes exit-down {
-  from { transform: translateY(0);    opacity: 1; }
-  to   { transform: translateY(120%); opacity: 0; }
-}
-
-@keyframes enter-up {
-  from { transform: translateY(120%); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
-}
-
-@keyframes enter-down {
-  from { transform: translateY(-120%); opacity: 0; }
-  to   { transform: translateY(0);     opacity: 1; }
-}
