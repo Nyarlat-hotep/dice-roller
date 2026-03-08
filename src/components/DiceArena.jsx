@@ -1,7 +1,8 @@
 import { useRef, useEffect } from 'react'
 import './DiceArena.css'
 
-const PARTICLE_COUNT = 300
+const PARTICLE_COUNT        = 300
+const PARTICLE_COUNT_MOBILE = 500
 const STAR_COLORS = ['#ffffff', '#e8f4ff', '#ffeedd', '#d4e8ff', '#ccddff']
 const DIE_COLORS = {
   4:   '#e04820',
@@ -25,7 +26,8 @@ function pickColor() {
 
 function makeParticles(W, H) {
   const mobile = W < 600
-  return Array.from({ length: PARTICLE_COUNT }, () => ({
+  const count  = mobile ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT
+  return Array.from({ length: count }, () => ({
     x: Math.random() * W,
     y: Math.random() * H,
     vx: (Math.random() - 0.5) * 0.5,
@@ -283,7 +285,7 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
 
     const totalSlots = allDigits.length
     const slotW      = W / totalSlots
-    const perDigit   = Math.floor(PARTICLE_COUNT / totalSlots)
+    const perDigit   = Math.floor(ps.length / totalSlots)
 
     const assignments = allDigits.map(({ value, isDropped }, d) => {
       const slotCenterX = slotW * d + slotW / 2
