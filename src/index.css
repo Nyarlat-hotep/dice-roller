@@ -39,3 +39,13 @@ body::before {
 #root { position: relative; z-index: 1; }
 
 button { font-family: inherit; cursor: pointer; }
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 168, 76, 0.25) transparent;
+}
+
+html::-webkit-scrollbar { width: 4px; }
+html::-webkit-scrollbar-track { background: transparent; }
+html::-webkit-scrollbar-thumb { background: rgba(201, 168, 76, 0.25); border-radius: 2px; }
+html::-webkit-scrollbar-thumb:hover { background: rgba(201, 168, 76, 0.45); }

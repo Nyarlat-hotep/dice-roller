@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { Volume2, VolumeX } from 'lucide-react'
 import { getMuted, setMuted, playRollCast, playDisadvantage } from './utils/sounds'
 import RollConfig from './components/RollConfig'
@@ -17,6 +17,7 @@ export default function App() {
   const [revealed, setRevealed] = useState(false)
   const [history, setHistory] = useState([])
   const [muted, setMutedState] = useState(() => getMuted())
+  const pendingEntryRef = useRef(null)
 
   const updateConfig = useCallback((patch) => setConfig(c => ({ ...c, ...patch })), [])
 
@@ -46,16 +47,12 @@ export default function App() {
     const notation = formatNotation({ ...config, sides: dieType })
     const entry = { id: Date.now(), notation, rolls, dropped, modifier, total, mode, sides: dieType }
 
-    const revealDelay = 300
-
+    pendingEntryRef.current = entry
     setRolling(true)
     setRevealed(false)
     setResult(entry)
 
-    setTimeout(() => {
-      setRolling(false)
-      setHistory(h => [entry, ...h])
-    }, revealDelay)
+    setTimeout(() => setRolling(false), 300)
   }, [config])
 
   return (
@@ -70,7 +67,12 @@ export default function App() {
         <div className="app-divider"><span>⟡</span></div>
       </header>
       <RollConfig config={config} onChange={updateConfig} onRoll={handleRoll} rolling={rolling} />
-      <DiceArena result={result} rolling={rolling} dieType={config.dieType} mode={config.mode} onFormed={() => setRevealed(true)} />
+      <DiceArena result={result} rolling={rolling} dieType={config.dieType} mode={config.mode} onFormed={() => {
+        setRevealed(true)
+        const entry = pendingEntryRef.current
+        pendingEntryRef.current = null
+        if (entry) setHistory(h => [entry, ...h])
+      }} />
       <ResultDisplay result={result} rolling={rolling} revealed={revealed} />
       <HistoryLog history={history} />
     </div>

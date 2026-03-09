@@ -69,7 +69,9 @@ export default function DiceArena({ result, rolling, dieType, mode, onFormed }) 
   const canvasRef    = useRef()
   const particlesRef = useRef(null)
   const dieTypeRef   = useRef(dieType)
+  const modeRef      = useRef(mode)
   const onFormedRef  = useRef(onFormed)
+  useEffect(() => { modeRef.current = mode }, [mode])
   useEffect(() => { onFormedRef.current = onFormed }, [onFormed])
   const stateRef     = useRef({
     phase: 'wander',
@@ -331,7 +333,14 @@ export default function DiceArena({ result, rolling, dieType, mode, onFormed }) 
         const jitter    = W < 600 ? 2 : Math.max(2, 7 * sizeFactor)
         psActive[pi].tx    = slotCenterX + (px - 100) * scale + (Math.random() - 0.5) * jitter
         psActive[pi].ty    = slotCenterY + (py - 100) * scale + (Math.random() - 0.5) * jitter
-        psActive[pi].color = isDropped ? '#ff5555' : (DIE_COLORS[dieTypeRef.current] ?? pickColor())
+        const dieColor = DIE_COLORS[dieTypeRef.current] ?? pickColor()
+        if (modeRef.current === 'advantage') {
+          psActive[pi].color = isDropped ? dieColor : '#44bb66'   // kept higher = green, dropped lower = die color
+        } else if (modeRef.current === 'disadvantage') {
+          psActive[pi].color = isDropped ? dieColor : '#ff5555'   // kept lower = red, dropped higher = die color
+        } else {
+          psActive[pi].color = dieColor
+        }
         psActive[pi].size  = digitSize * (0.4 + Math.random() * 1.2)
       }
 
