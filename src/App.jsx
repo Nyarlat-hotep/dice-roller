@@ -14,6 +14,7 @@ export default function App() {
   const [config, setConfig] = useState(DEFAULT_CONFIG)
   const [rolling, setRolling] = useState(false)
   const [result, setResult] = useState(null)
+  const [revealed, setRevealed] = useState(false)
   const [history, setHistory] = useState([])
   const [muted, setMutedState] = useState(() => getMuted())
 
@@ -48,6 +49,7 @@ export default function App() {
     const revealDelay = 300
 
     setRolling(true)
+    setRevealed(false)
     setResult(entry)
 
     setTimeout(() => {
@@ -68,8 +70,8 @@ export default function App() {
         <div className="app-divider"><span>⟡</span></div>
       </header>
       <RollConfig config={config} onChange={updateConfig} onRoll={handleRoll} rolling={rolling} />
-      <DiceArena result={result} rolling={rolling} dieType={config.dieType} mode={config.mode} />
-      <ResultDisplay result={result} rolling={rolling} />
+      <DiceArena result={result} rolling={rolling} dieType={config.dieType} mode={config.mode} onFormed={() => setRevealed(true)} />
+      <ResultDisplay result={result} rolling={rolling} revealed={revealed} />
       <HistoryLog history={history} />
     </div>
   )

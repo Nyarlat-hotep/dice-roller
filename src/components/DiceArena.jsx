@@ -16,6 +16,7 @@ const DIE_COLORS = {
 }
 const FORM_DURATION      = 400   // ms to show each digit before starting the next
 const HOLD_DURATION      = 2500  // ms all digits stay visible before dissipating
+const HOLD_REVEAL_DELAY  = 2000   // ms into hold phase before revealing the total (lets particles fully settle)
 const LERP_IN            = 0.04  // fraction of remaining distance closed per frame (lerp, no bounce)
 const RELEASE_FADE_RATE  = 0.005 // opacity decrease per frame when dissolving back into cloud
 const MAX_WANDER_SPEED   = 0.8
@@ -64,16 +65,19 @@ function sampleDigit(label, count, mobile = false) {
   return lit.filter((_, i) => i % step === 0).slice(0, count)
 }
 
-export default function DiceArena({ result, rolling, dieType, mode }) {
+export default function DiceArena({ result, rolling, dieType, mode, onFormed }) {
   const canvasRef    = useRef()
   const particlesRef = useRef(null)
   const dieTypeRef   = useRef(dieType)
+  const onFormedRef  = useRef(onFormed)
+  useEffect(() => { onFormedRef.current = onFormed }, [onFormed])
   const stateRef     = useRef({
     phase: 'wander',
     digitAssignments: [],
     formingDigit: 0,
     formingStart: 0,
     holdStart: 0,
+    revealFired: false,
   })
   const rafRef = useRef()
 
@@ -123,11 +127,17 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
           }
           playDigitForm()
         } else if (st.formingDigit >= digitAssignments.length - 1 && elapsed > FORM_DURATION) {
-          st.phase     = 'hold'
-          st.holdStart = now
+          st.phase       = 'hold'
+          st.holdStart   = now
+          st.revealFired = false
           playResultReveal()
           // Dropped digits stay visible (red) through hold, released together with kept at hold end
         }
+      }
+
+      if (st.phase === 'hold' && !st.revealFired && now - st.holdStart > HOLD_REVEAL_DELAY) {
+        st.revealFired = true
+        onFormedRef.current?.()
       }
 
       if (st.phase === 'hold' && now - st.holdStart > HOLD_DURATION) {
@@ -266,6 +276,7 @@ export default function DiceArena({ result, rolling, dieType, mode }) {
     }
     st.phase            = 'wander'
     st.digitAssignments = []
+    st.revealFired      = false
   }, [rolling])
 
   // Trigger forming when result arrives

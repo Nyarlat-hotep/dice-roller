@@ -10,10 +10,11 @@
 .result-display {
   text-align: center;
   padding: 1rem;
-  transition: opacity 0.3s ease;
+  opacity: 0;
+  transition: opacity 0.6s ease;
 }
 
-.result-display--rolling { opacity: 0.3; }
+.result-display--revealed { opacity: 1; }
 
 .result-total {
   font-size: 4rem;

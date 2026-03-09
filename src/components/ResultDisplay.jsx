@@ -1,14 +1,14 @@
 import { ArrowRight, Plus, Minus } from 'lucide-react'
 import './ResultDisplay.css'
 
-export default function ResultDisplay({ result, rolling }) {
+export default function ResultDisplay({ result, rolling, revealed }) {
   if (!result || rolling) return null
 
   const { rolls, dropped, modifier, total } = result
   const rollSum = rolls.reduce((s, v) => s + v, 0)
 
   return (
-    <div className="result-display">
+    <div className={`result-display${revealed ? ' result-display--revealed' : ''}`}>
       <div className="result-fate-label">the fates decree</div>
       <div className="result-total">{total}</div>
       <div className="result-breakdown">

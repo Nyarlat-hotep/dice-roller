@@ -38,6 +38,11 @@
   gap: 0.4rem;
 }
 
+@keyframes historyFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 .history-entry {
   display: flex;
   align-items: center;
@@ -47,6 +52,7 @@
   color: var(--fg-parchment-dim);
   padding: 0.25rem 0;
   border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+  animation: historyFadeIn 0.6s ease forwards;
 }
 
 .history-notation { color: var(--fg-gold-dim); min-width: 6ch; }
