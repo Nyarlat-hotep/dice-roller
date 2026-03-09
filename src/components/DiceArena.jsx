@@ -17,9 +17,12 @@ const DIE_COLORS = {
 const FORM_DURATION      = 400   // ms to show each digit before starting the next
 const HOLD_DURATION      = 2500  // ms all digits stay visible before dissipating
 const HOLD_REVEAL_DELAY  = 2000   // ms into hold phase before revealing the total (lets particles fully settle)
-const LERP_IN            = 0.04  // fraction of remaining distance closed per frame (lerp, no bounce)
-const RELEASE_FADE_RATE  = 0.005 // opacity decrease per frame when dissolving back into cloud
-const MAX_WANDER_SPEED   = 0.8
+const LERP_IN              = 0.04  // fraction of remaining distance closed per frame (lerp, no bounce)
+const RELEASE_FADE_RATE    = 0.005 // opacity decrease per frame when dissolving back into cloud
+const MAX_WANDER_SPEED     = 0.8
+const MAX_ATTRACTED_SPEED  = 2.2
+const ATTRACTION_RADIUS    = 130   // px — cursor influence radius
+const ATTRACTION_STRENGTH  = 0.07  // velocity impulse per frame at radius edge
 
 function pickColor() {
   return STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)]
@@ -67,6 +70,7 @@ function sampleDigit(label, count, mobile = false) {
 
 export default function DiceArena({ result, rolling, dieType, mode, onFormed }) {
   const canvasRef    = useRef()
+  const mouseRef     = useRef({ x: -9999, y: -9999, active: false })
   const particlesRef = useRef(null)
   const dieTypeRef   = useRef(dieType)
   const modeRef      = useRef(mode)
@@ -100,6 +104,16 @@ export default function DiceArena({ result, rolling, dieType, mode, onFormed }) 
     const ro = new ResizeObserver(resize)
     ro.observe(canvas)
     resize() // also call immediately in case already laid out
+
+    const onMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect()
+      mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top, active: true }
+    }
+    const onMouseLeave = () => {
+      mouseRef.current = { x: -9999, y: -9999, active: false }
+    }
+    canvas.addEventListener('mousemove', onMouseMove)
+    canvas.addEventListener('mouseleave', onMouseLeave)
 
     let lastTime = performance.now()
 
@@ -177,8 +191,19 @@ export default function DiceArena({ result, rolling, dieType, mode, onFormed }) 
           if (p.x > W - 20)  p.vx -= 0.04 * dt * 60
           if (p.y < 20)      p.vy += 0.04 * dt * 60
           if (p.y > H - 20)  p.vy -= 0.04 * dt * 60
+          const { x: mx, y: my, active } = mouseRef.current
+          if (active) {
+            const adx = mx - p.x, ady = my - p.y
+            const adist = Math.sqrt(adx * adx + ady * ady)
+            if (adist < ATTRACTION_RADIUS && adist > 0) {
+              const force = Math.pow(1 - adist / ATTRACTION_RADIUS, 0.8) * ATTRACTION_STRENGTH * dt * 60
+              p.vx += (adx / adist) * force
+              p.vy += (ady / adist) * force
+            }
+          }
+          const cap = active ? MAX_ATTRACTED_SPEED : MAX_WANDER_SPEED
           const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy)
-          if (spd > MAX_WANDER_SPEED) { p.vx *= MAX_WANDER_SPEED / spd; p.vy *= MAX_WANDER_SPEED / spd }
+          if (spd > cap) { p.vx *= cap / spd; p.vy *= cap / spd }
           p.x += p.vx * dt * 60
           p.y += p.vy * dt * 60
           p.opacity = Math.min(p.baseOpacity, p.opacity + 0.01 * dt * 60)
@@ -238,6 +263,8 @@ export default function DiceArena({ result, rolling, dieType, mode, onFormed }) 
     return () => {
       cancelAnimationFrame(rafRef.current)
       ro.disconnect()
+      canvas.removeEventListener('mousemove', onMouseMove)
+      canvas.removeEventListener('mouseleave', onMouseLeave)
     }
   }, [])
 

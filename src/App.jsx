@@ -6,6 +6,7 @@ import DiceArena from './components/DiceArena'
 import ResultDisplay from './components/ResultDisplay'
 import HistoryLog from './components/HistoryLog'
 import { rollDice, rollWithAdvantage, rollWithDisadvantage, calculateTotal, formatNotation } from './utils/rollLogic'
+import CustomCursor from './components/CustomCursor'
 import './App.css'
 
 const DEFAULT_CONFIG = { dieType: 20, count: 1, modifier: 0, mode: 'normal' }
@@ -57,6 +58,7 @@ export default function App() {
 
   return (
     <div className="app">
+      <CustomCursor />
       <header className="app-header">
         <button className="mute-btn" onClick={toggleMute} aria-label={muted ? 'Unmute' : 'Mute'}>
           {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
