@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Volume2, VolumeX } from 'lucide-react'
-import { getMuted, setMuted, playRollCast } from './utils/sounds'
+import { getMuted, setMuted, playRollCast, playDisadvantage } from './utils/sounds'
 import RollConfig from './components/RollConfig'
 import DiceArena from './components/DiceArena'
 import ResultDisplay from './components/ResultDisplay'
@@ -26,7 +26,8 @@ export default function App() {
   }, [muted])
 
   const handleRoll = useCallback(() => {
-    playRollCast()
+    if (config.mode === 'disadvantage') playDisadvantage()
+    else playRollCast()
     const { dieType, count, modifier, mode } = config
     let rolls, dropped = null
 

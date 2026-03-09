@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
+import { playDieSelect } from '../utils/sounds'
 import './ModeToggle.css'
 
 const MODES = [
@@ -26,7 +27,7 @@ export default function ModeToggle({ mode, onChange }) {
           key={value}
           ref={el => { btnRefs.current[i] = el }}
           className={`mode-btn${mode === value ? ' mode-btn--active' : ''}`}
-          onClick={() => onChange(value)}
+          onClick={() => { playDieSelect(); onChange(value) }}
         >
           {label}
         </button>
