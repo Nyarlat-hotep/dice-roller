@@ -24,7 +24,7 @@
   color: var(--fg-gold-faint);
   font-size: 0.8rem;
   letter-spacing: 2px;
-  font-family: Georgia, serif;
+  font-family: inherit;
   font-style: italic;
   pointer-events: none;
   white-space: nowrap;

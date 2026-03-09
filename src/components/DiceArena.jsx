@@ -51,7 +51,7 @@ function sampleDigit(label, count, mobile = false) {
   const fontSize = String(label).length > 1 ? 110 : 140
   ctx.fillStyle = '#fff'
   // heavier font weight on mobile fills strokes more densely with the same particle count
-  ctx.font = `${mobile ? 900 : 'bold'} ${fontSize}px Georgia, serif`
+  ctx.font = `${mobile ? 900 : 'bold'} ${fontSize}px 'Metamorphous', serif`
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillText(String(label), size / 2, size / 2)

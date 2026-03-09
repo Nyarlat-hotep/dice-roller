@@ -33,7 +33,7 @@
   border: 1px solid var(--border-gold);
   background: rgba(255, 255, 255, 0.03);
   color: var(--fg-parchment-dim);
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: inherit;
   font-size: 1rem;
   letter-spacing: 1px;
   transition: all 0.15s ease;
