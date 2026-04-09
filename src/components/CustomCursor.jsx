@@ -1,69 +1,94 @@
-import { useEffect, useState } from 'react'
-import { motion, useMotionValue } from 'framer-motion'
+import { useEffect, useRef } from 'react'
 import './CustomCursor.css'
 
-const centerTransform = ({ x, y }) => `translate(${x}, ${y}) translate(-50%, -50%)`
+const PARTICLE_COUNT = 14
 
-// Pip [cx, cy] positions on a 32×32 grid
-const PIPS = {
-  1: [[16, 16]],
-  2: [[24, 8],  [8, 24]],
-  3: [[24, 8],  [16, 16], [8, 24]],
-  4: [[8, 8],   [24, 8],  [8, 24],  [24, 24]],
-  5: [[8, 8],   [24, 8],  [16, 16], [8, 24],  [24, 24]],
-  6: [[8, 8],   [24, 8],  [8, 16],  [24, 16], [8, 24],  [24, 24]],
+// Each particle gets unique orbital params
+function makeParticles() {
+  return Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
+    angle:   (i / PARTICLE_COUNT) * Math.PI * 2,
+    radius:  18 + Math.random() * 22,
+    speed:   (0.6 + Math.random() * 1.0) * (Math.random() < 0.5 ? 1 : -1),
+    phase:   Math.random() * Math.PI * 2,
+    wobble:  0.4 + Math.random() * 0.6,
+    size:    3 + Math.random() * 4,
+    lagX:    -100,
+    lagY:    -100,
+    lerpK:   0.06 + Math.random() * 0.08,
+  }))
 }
 
+const centerTransform = (x, y) => `translate(${x}px, ${y}px) translate(-50%, -50%)`
+
 export default function CustomCursor() {
-  const [face, setFace] = useState(6)
-  const [isHovering, setIsHovering] = useState(false)
-  const [pulse, setPulse] = useState(false)
-  const cursorX = useMotionValue(-100)
-  const cursorY = useMotionValue(-100)
+  const dotRef      = useRef(null)
+  const trailRef    = useRef([])
+  const mouseRef    = useRef({ x: -100, y: -100 })
+  const particles   = useRef(makeParticles())
+  const rafRef      = useRef(null)
+  const tRef        = useRef(0)
 
   useEffect(() => {
-    const onMove = (e) => { cursorX.set(e.clientX); cursorY.set(e.clientY) }
-    const onOver = (e) => {
-      setIsHovering(!!e.target.closest('button, a, [role="button"], input, select, textarea'))
-    }
-    const onClick = () => {
-      setFace(Math.ceil(Math.random() * 6))
-      setPulse(true)
-      setTimeout(() => setPulse(false), 140)
-    }
+    const onMove = (e) => { mouseRef.current = { x: e.clientX, y: e.clientY } }
     window.addEventListener('mousemove', onMove)
-    window.addEventListener('mouseover', onOver)
-    window.addEventListener('click', onClick)
+
+    let last = performance.now()
+
+    function loop(now) {
+      const delta = Math.min((now - last) / 1000, 0.05)
+      last = now
+      tRef.current += delta
+
+      const { x: mx, y: my } = mouseRef.current
+      const t = tRef.current
+
+      // Main dot — snaps directly
+      if (dotRef.current) {
+        dotRef.current.style.transform = centerTransform(mx, my)
+      }
+
+      // Each particle orbits cursor with lazy lerp
+      particles.current.forEach((p, i) => {
+        const el = trailRef.current[i]
+        if (!el) return
+
+        // Animated orbital target around cursor
+        const r = p.radius * (0.75 + 0.25 * Math.sin(t * p.wobble + p.phase))
+        const a = p.angle + t * p.speed
+        const tx = mx + Math.cos(a) * r
+        const ty = my + Math.sin(a) * r * 0.55  // flatten to ellipse (isometric feel)
+
+        // Lazy lerp toward target
+        p.lagX += (tx - p.lagX) * p.lerpK
+        p.lagY += (ty - p.lagY) * p.lerpK
+
+        const dist = Math.hypot(p.lagX - mx, p.lagY - my)
+        const maxDist = p.radius + 10
+        const proximity = 1 - Math.min(dist / maxDist, 1)
+        const opacity = 0.25 + proximity * 0.65
+
+        el.style.transform = centerTransform(p.lagX, p.lagY)
+        el.style.opacity   = opacity
+        el.style.width     = `${p.size}px`
+        el.style.height    = `${p.size}px`
+      })
+
+      rafRef.current = requestAnimationFrame(loop)
+    }
+
+    rafRef.current = requestAnimationFrame(loop)
     return () => {
       window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('mouseover', onOver)
-      window.removeEventListener('click', onClick)
+      cancelAnimationFrame(rafRef.current)
     }
-  }, [cursorX, cursorY])
+  }, [])
 
   return (
-    <motion.div
-      className="cursor-die"
-      style={{ x: cursorX, y: cursorY }}
-      transformTemplate={centerTransform}
-      animate={{
-        scale: pulse ? 1.35 : isHovering ? 1.15 : 1,
-        opacity: isHovering ? 1 : 0.88,
-      }}
-      transition={{ duration: pulse ? 0.07 : 0.18 }}
-    >
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <rect
-          x="1.5" y="1.5" width="29" height="29" rx="6"
-          fill="#0d0f1c"
-          stroke="#d4b030"
-          strokeWidth={isHovering ? 1.8 : 1.2}
-          strokeOpacity={isHovering ? 1 : 0.7}
-        />
-        {PIPS[face].map(([cx, cy], i) => (
-          <circle key={i} cx={cx} cy={cy} r="2.6" fill="#d4b030" fillOpacity="0.95" />
-        ))}
-      </svg>
-    </motion.div>
+    <>
+      <div ref={dotRef} className="cursor-dot-main" />
+      {Array.from({ length: PARTICLE_COUNT }, (_, i) => (
+        <div key={i} ref={el => trailRef.current[i] = el} className="cursor-cloud-particle" />
+      ))}
+    </>
   )
 }

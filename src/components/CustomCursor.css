@@ -2,11 +2,34 @@
   cursor: none !important;
 }
 
-.cursor-die {
+.cursor-dot-main {
   position: fixed;
   top: 0;
   left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d4b030;
   pointer-events: none;
   z-index: 99999;
-  filter: drop-shadow(0 0 5px rgba(212, 176, 48, 0.55));
+  box-shadow:
+    0 0 6px  #d4b030,
+    0 0 16px rgba(212, 176, 48, 0.8),
+    0 0 32px rgba(212, 176, 48, 0.4);
+  will-change: transform;
+}
+
+.cursor-cloud-particle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe080 0%, #d4b030 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 99998;
+  box-shadow:
+    0 0 8px  rgba(212, 176, 48, 0.9),
+    0 0 20px rgba(212, 176, 48, 0.5),
+    0 0 40px rgba(180, 120, 0, 0.25);
+  will-change: transform, opacity;
 }
