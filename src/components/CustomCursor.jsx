@@ -83,8 +83,8 @@ export default function CustomCursor() {
           ty = my + Math.sin(a) * r
         }
 
-        // Lerp toward target (faster lerp on hover for snappier alignment)
-        const k = hovering ? 0.22 : 0.18
+        // Lerp toward target — gentler transition into the line
+        const k = hovering ? 0.07 : 0.18
         s.lagX += (tx - s.lagX) * k
         s.lagY += (ty - s.lagY) * k
 
