@@ -19,6 +19,21 @@
   will-change: transform;
 }
 
+.cursor-orbit-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 176, 48, 0.5);
+  box-shadow:
+    0 0 6px rgba(212, 176, 48, 0.35),
+    inset 0 0 4px rgba(212, 176, 48, 0.2);
+  pointer-events: none;
+  z-index: 99997;
+  will-change: transform, opacity;
+  transition: opacity 0.18s ease;
+}
+
 .cursor-cloud-particle {
   position: fixed;
   top: 0;

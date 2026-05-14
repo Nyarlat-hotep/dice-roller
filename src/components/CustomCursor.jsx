@@ -16,6 +16,7 @@ const centerTransform = (x, y) => `translate(${x}px, ${y}px) translate(-50%, -50
 
 export default function CustomCursor() {
   const dotRef    = useRef(null)
+  const ringRef   = useRef([])
   const trailRef  = useRef([])
   const mouseRef  = useRef({ x: -100, y: -100 })
   const hoverRef  = useRef(false)
@@ -54,6 +55,16 @@ export default function CustomCursor() {
 
       const hovering = hoverRef.current
 
+      // Orbit rings follow cursor; hide on hover
+      PLANETS.forEach((p, i) => {
+        const ring = ringRef.current[i]
+        if (!ring) return
+        ring.style.transform = centerTransform(mx, my)
+        ring.style.width  = `${p.radius * 2}px`
+        ring.style.height = `${p.radius * 2}px`
+        ring.style.opacity = hovering ? 0 : 0.35
+      })
+
       PLANETS.forEach((p, i) => {
         const el = trailRef.current[i]
         if (!el) return
@@ -69,7 +80,7 @@ export default function CustomCursor() {
           const r = p.radius * (0.9 + 0.1 * Math.sin(t * p.wobble + s.phase))
           const a = s.angle + t * p.speed
           tx = mx + Math.cos(a) * r
-          ty = my + Math.sin(a) * r * 0.55  // slight ellipse
+          ty = my + Math.sin(a) * r
         }
 
         // Lerp toward target (faster lerp on hover for snappier alignment)
@@ -96,7 +107,10 @@ export default function CustomCursor() {
     <>
       <div ref={dotRef} className="cursor-dot-main" />
       {PLANETS.map((_, i) => (
-        <div key={i} ref={el => trailRef.current[i] = el} className="cursor-cloud-particle" />
+        <div key={`r${i}`} ref={el => ringRef.current[i] = el} className="cursor-orbit-ring" />
+      ))}
+      {PLANETS.map((_, i) => (
+        <div key={`p${i}`} ref={el => trailRef.current[i] = el} className="cursor-cloud-particle" />
       ))}
     </>
   )
