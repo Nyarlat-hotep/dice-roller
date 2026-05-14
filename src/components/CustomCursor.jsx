@@ -27,6 +27,7 @@ export default function CustomCursor() {
     PLANETS.map((p, i) => ({
       angle: (i / PLANETS.length) * Math.PI * 2,
       phase: Math.random() * Math.PI * 2,
+      hoverT: 0,
       lagX: -100,
       lagY: -100,
     }))
@@ -70,21 +71,27 @@ export default function CustomCursor() {
         if (!el) return
         const s = stateRef.current[i]
 
-        let tx, ty
-        if (hovering) {
-          // Stack vertically below cursor, largest (i=0) closest
-          tx = mx
-          ty = my + LINE_OFFSET + i * LINE_SPACING
-        } else {
-          // Orbit on personal ring; inner faster
-          const r = p.radius * (0.9 + 0.1 * Math.sin(t * p.wobble + s.phase))
-          const a = s.angle + t * p.speed
-          tx = mx + Math.cos(a) * r
-          ty = my + Math.sin(a) * r
-        }
+        // Ease the hover transition state 0↔1
+        s.hoverT += ((hovering ? 1 : 0) - s.hoverT) * 0.06
 
-        // Lerp toward target — gentler transition into the line
-        const k = hovering ? 0.07 : 0.18
+        // Orbit parameters (continue advancing so motion stays alive)
+        const orbitAngle = s.angle + t * p.speed
+        const orbitR     = p.radius * (0.9 + 0.1 * Math.sin(t * p.wobble + s.phase))
+
+        // Line-stack target: angle straight down, radius based on stack index
+        const targetAngle  = Math.PI / 2
+        const targetRadius = LINE_OFFSET + i * LINE_SPACING
+
+        // Shortest-path angular blend so planets spiral in rather than snapping
+        const twoPi = Math.PI * 2
+        const delta = ((targetAngle - orbitAngle) % twoPi + twoPi + Math.PI) % twoPi - Math.PI
+        const a = orbitAngle + delta * s.hoverT
+        const r = orbitR + (targetRadius - orbitR) * s.hoverT
+
+        const tx = mx + Math.cos(a) * r
+        const ty = my + Math.sin(a) * r
+
+        const k = 0.22
         s.lagX += (tx - s.lagX) * k
         s.lagY += (ty - s.lagY) * k
 
