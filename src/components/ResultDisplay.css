@@ -54,13 +54,17 @@
 }
 
 .result-chip {
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5em;
+  height: 1.8em;
+  padding: 0 0.5rem;
+  line-height: 1;
   border: 1px solid var(--border-gold);
   border-radius: 4px;
   color: var(--fg-parchment);
   background: rgba(201, 168, 76, 0.07);
-  padding-bottom: 6px;
 }
 
 .result-chip--dropped {
