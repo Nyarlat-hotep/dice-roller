@@ -68,7 +68,13 @@ export default function App() {
         <p className="app-subtitle">May they be merciful, traveller</p>
         <div className="app-divider"><span>⟡</span></div>
       </header>
-      <RollConfig config={config} onChange={updateConfig} onRoll={handleRoll} rolling={rolling} />
+      <RollConfig
+        config={config}
+        onChange={updateConfig}
+        onRoll={handleRoll}
+        onReset={() => setConfig(DEFAULT_CONFIG)}
+        rolling={rolling}
+      />
       <DiceArena result={result} rolling={rolling} dieType={config.dieType} mode={config.mode} onFormed={() => {
         setRevealed(true)
         const entry = pendingEntryRef.current
