@@ -24,8 +24,8 @@
   height: 32px;
   padding: 0;
   border-radius: 50%;
-  border: 1px solid rgba(212, 176, 48, 0.35);
-  background: rgba(15, 18, 42, 0.4);
+  border: none;
+  background: transparent;
   color: var(--fg-gold, #d4b030);
   transition: border-color 0.18s ease, color 0.18s ease, transform 0.18s ease, background 0.18s ease;
 }
