@@ -1,35 +1,42 @@
 import { useEffect, useRef } from 'react'
 import './CustomCursor.css'
 
-const PARTICLE_COUNT = 14
+// 3 planets, inner → outer
+const PLANETS = [
+  { radius: 16, speed:  2.2, size: 8, wobble: 0.5 },
+  { radius: 28, speed:  1.3, size: 6, wobble: 0.4 },
+  { radius: 42, speed:  0.7, size: 4, wobble: 0.3 },
+]
 
-// Each particle gets unique orbital params
-function makeParticles() {
-  return Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
-    angle:   (i / PARTICLE_COUNT) * Math.PI * 2,
-    radius:  18 + Math.random() * 22,
-    speed:   (0.6 + Math.random() * 1.0) * (Math.random() < 0.5 ? 1 : -1),
-    phase:   Math.random() * Math.PI * 2,
-    wobble:  0.4 + Math.random() * 0.6,
-    size:    3 + Math.random() * 4,
-    lagX:    -100,
-    lagY:    -100,
-    lerpK:   0.06 + Math.random() * 0.08,
-  }))
-}
+const HOVER_SELECTOR = 'a, button, [role="button"], input, select, textarea, label, summary'
+const LINE_SPACING = 14   // px between stacked planets on hover
+const LINE_OFFSET  = 16   // px below cursor for the first planet
 
 const centerTransform = (x, y) => `translate(${x}px, ${y}px) translate(-50%, -50%)`
 
 export default function CustomCursor() {
-  const dotRef      = useRef(null)
-  const trailRef    = useRef([])
-  const mouseRef    = useRef({ x: -100, y: -100 })
-  const particles   = useRef(makeParticles())
-  const rafRef      = useRef(null)
-  const tRef        = useRef(0)
+  const dotRef    = useRef(null)
+  const trailRef  = useRef([])
+  const mouseRef  = useRef({ x: -100, y: -100 })
+  const hoverRef  = useRef(false)
+  const rafRef    = useRef(null)
+  const tRef      = useRef(0)
+
+  const stateRef = useRef(
+    PLANETS.map((p, i) => ({
+      angle: (i / PLANETS.length) * Math.PI * 2,
+      phase: Math.random() * Math.PI * 2,
+      lagX: -100,
+      lagY: -100,
+    }))
+  )
 
   useEffect(() => {
-    const onMove = (e) => { mouseRef.current = { x: e.clientX, y: e.clientY } }
+    const onMove = (e) => {
+      mouseRef.current = { x: e.clientX, y: e.clientY }
+      const el = e.target
+      hoverRef.current = !!(el && el.closest && el.closest(HOVER_SELECTOR))
+    }
     window.addEventListener('mousemove', onMove)
 
     let last = performance.now()
@@ -38,39 +45,41 @@ export default function CustomCursor() {
       const delta = Math.min((now - last) / 1000, 0.05)
       last = now
       tRef.current += delta
-
-      const { x: mx, y: my } = mouseRef.current
       const t = tRef.current
+      const { x: mx, y: my } = mouseRef.current
 
-      // Main dot — snaps directly
       if (dotRef.current) {
         dotRef.current.style.transform = centerTransform(mx, my)
       }
 
-      // Each particle orbits cursor with lazy lerp
-      particles.current.forEach((p, i) => {
+      const hovering = hoverRef.current
+
+      PLANETS.forEach((p, i) => {
         const el = trailRef.current[i]
         if (!el) return
+        const s = stateRef.current[i]
 
-        // Animated orbital target around cursor
-        const r = p.radius * (0.75 + 0.25 * Math.sin(t * p.wobble + p.phase))
-        const a = p.angle + t * p.speed
-        const tx = mx + Math.cos(a) * r
-        const ty = my + Math.sin(a) * r * 0.55  // flatten to ellipse (isometric feel)
+        let tx, ty
+        if (hovering) {
+          // Stack vertically below cursor, largest (i=0) closest
+          tx = mx
+          ty = my + LINE_OFFSET + i * LINE_SPACING
+        } else {
+          // Orbit on personal ring; inner faster
+          const r = p.radius * (0.9 + 0.1 * Math.sin(t * p.wobble + s.phase))
+          const a = s.angle + t * p.speed
+          tx = mx + Math.cos(a) * r
+          ty = my + Math.sin(a) * r * 0.55  // slight ellipse
+        }
 
-        // Lazy lerp toward target
-        p.lagX += (tx - p.lagX) * p.lerpK
-        p.lagY += (ty - p.lagY) * p.lerpK
+        // Lerp toward target (faster lerp on hover for snappier alignment)
+        const k = hovering ? 0.22 : 0.18
+        s.lagX += (tx - s.lagX) * k
+        s.lagY += (ty - s.lagY) * k
 
-        const dist = Math.hypot(p.lagX - mx, p.lagY - my)
-        const maxDist = p.radius + 10
-        const proximity = 1 - Math.min(dist / maxDist, 1)
-        const opacity = 0.25 + proximity * 0.65
-
-        el.style.transform = centerTransform(p.lagX, p.lagY)
-        el.style.opacity   = opacity
-        el.style.width     = `${p.size}px`
-        el.style.height    = `${p.size}px`
+        el.style.transform = centerTransform(s.lagX, s.lagY)
+        el.style.width  = `${p.size}px`
+        el.style.height = `${p.size}px`
       })
 
       rafRef.current = requestAnimationFrame(loop)
@@ -86,7 +95,7 @@ export default function CustomCursor() {
   return (
     <>
       <div ref={dotRef} className="cursor-dot-main" />
-      {Array.from({ length: PARTICLE_COUNT }, (_, i) => (
+      {PLANETS.map((_, i) => (
         <div key={i} ref={el => trailRef.current[i] = el} className="cursor-cloud-particle" />
       ))}
     </>
