@@ -5,11 +5,16 @@ import RollConfig from './components/RollConfig'
 import DiceArena from './components/DiceArena'
 import ResultDisplay from './components/ResultDisplay'
 import HistoryLog from './components/HistoryLog'
-import { rollDice, rollWithAdvantage, rollWithDisadvantage, calculateTotal, formatNotation } from './utils/rollLogic'
+import { rollChain, rollWithAdvantage, rollWithDisadvantage, calculateTotal, formatNotation } from './utils/rollLogic'
 import CustomCursor from './components/CustomCursor'
 import './App.css'
 
-const DEFAULT_CONFIG = { dieType: 20, count: 1, modifier: 0, mode: 'normal' }
+const DEFAULT_CONFIG = { terms: [{ sides: 20, count: 1 }], modifier: 0, mode: 'normal' }
+const MAX_DICE = 12 // total dice across the chain — keeps the particle arena legible
+
+const totalDice = terms => terms.reduce((s, t) => s + t.count, 0)
+// Adv/Dis only makes sense on a single die type; a mixed chain forces normal.
+const isChain = terms => terms.length >= 2
 
 export default function App() {
   const [config, setConfig] = useState(DEFAULT_CONFIG)
@@ -22,6 +27,24 @@ export default function App() {
 
   const updateConfig = useCallback((patch) => setConfig(c => ({ ...c, ...patch })), [])
 
+  // Tap a die: increment its term if present, else append a new one.
+  const addDie = useCallback((sides) => setConfig(c => {
+    if (totalDice(c.terms) >= MAX_DICE) return c
+    const idx = c.terms.findIndex(t => t.sides === sides)
+    const terms = idx >= 0
+      ? c.terms.map((t, i) => i === idx ? { ...t, count: t.count + 1 } : t)
+      : [...c.terms, { sides, count: 1 }]
+    return { ...c, terms, mode: isChain(terms) ? 'normal' : c.mode }
+  }), [])
+
+  // Tap a chain chip: remove one die of that type; drop the term at zero.
+  const removeDie = useCallback((sides) => setConfig(c => {
+    const terms = c.terms
+      .map(t => t.sides === sides ? { ...t, count: t.count - 1 } : t)
+      .filter(t => t.count > 0)
+    return { ...c, terms }
+  }), [])
+
   const toggleMute = useCallback(() => {
     const next = !muted
     setMuted(next)
@@ -29,24 +52,26 @@ export default function App() {
   }, [muted])
 
   const handleRoll = useCallback(() => {
-    if (config.mode === 'disadvantage') playDisadvantage()
-    else playRollCast()
-    const { dieType, count, modifier, mode } = config
-    let rolls, dropped = null
+    const { terms, modifier } = config
+    if (terms.length === 0) return
+    const mode = isChain(terms) ? 'normal' : config.mode
 
-    if (mode === 'advantage') {
-      const r = rollWithAdvantage(count, dieType)
-      rolls = r.kept; dropped = r.dropped
-    } else if (mode === 'disadvantage') {
-      const r = rollWithDisadvantage(count, dieType)
-      rolls = r.kept; dropped = r.dropped
+    if (mode === 'disadvantage') playDisadvantage()
+    else playRollCast()
+
+    let rolls, dropped = null
+    if (mode === 'advantage' || mode === 'disadvantage') {
+      const { sides, count } = terms[0]
+      const r = mode === 'advantage' ? rollWithAdvantage(count, sides) : rollWithDisadvantage(count, sides)
+      rolls   = r.kept.map(value => ({ sides, value }))
+      dropped = r.dropped.map(value => ({ sides, value }))
     } else {
-      rolls = rollDice(count, dieType)
+      rolls = rollChain(terms)
     }
 
     const total = calculateTotal(rolls, modifier)
-    const notation = formatNotation({ ...config, sides: dieType })
-    const entry = { id: Date.now(), notation, rolls, dropped, modifier, total, mode, sides: dieType }
+    const notation = formatNotation({ terms, modifier, mode })
+    const entry = { id: Date.now(), notation, rolls, dropped, modifier, total, mode }
 
     pendingEntryRef.current = entry
     setRolling(true)
@@ -71,11 +96,13 @@ export default function App() {
       <RollConfig
         config={config}
         onChange={updateConfig}
+        onAddDie={addDie}
+        onRemoveDie={removeDie}
         onRoll={handleRoll}
         onReset={() => setConfig(DEFAULT_CONFIG)}
         rolling={rolling}
       />
-      <DiceArena result={result} rolling={rolling} dieType={config.dieType} mode={config.mode} onFormed={() => {
+      <DiceArena result={result} rolling={rolling} dieType={config.terms[config.terms.length - 1]?.sides ?? 20} mode={config.mode} onFormed={() => {
         setRevealed(true)
         const entry = pendingEntryRef.current
         pendingEntryRef.current = null

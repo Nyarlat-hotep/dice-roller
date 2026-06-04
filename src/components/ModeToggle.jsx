@@ -8,7 +8,7 @@ const MODES = [
   { value: 'disadvantage', label: 'DIS' },
 ]
 
-export default function ModeToggle({ mode, onChange }) {
+export default function ModeToggle({ mode, onChange, disabled = false, disabledHint }) {
   const activeIndex = MODES.findIndex(m => m.value === mode)
   const btnRefs     = useRef([])
   const [indicator, setIndicator] = useState({ left: 0, width: 0 })
@@ -20,13 +20,17 @@ export default function ModeToggle({ mode, onChange }) {
   }, [activeIndex])
 
   return (
-    <div className="mode-toggle">
+    <div
+      className={`mode-toggle${disabled ? ' mode-toggle--disabled' : ''}`}
+      title={disabled ? disabledHint : undefined}
+    >
       <div className="mode-indicator" style={{ left: indicator.left, width: indicator.width }} />
       {MODES.map(({ value, label }, i) => (
         <button
           key={value}
           ref={el => { btnRefs.current[i] = el }}
           className={`mode-btn${mode === value ? ' mode-btn--active' : ''}`}
+          disabled={disabled}
           onClick={() => { playDieSelect(); onChange(value) }}
         >
           {label}

@@ -26,12 +26,23 @@ export function rollWithDisadvantage(count, sides) {
     : { kept: setB, dropped: setA }
 }
 
-export function calculateTotal(rolls, modifier) {
-  return rolls.reduce((s, v) => s + v, 0) + modifier
+// Roll a chain of differing dice terms, e.g. [{ sides: 20, count: 1 }, { sides: 4, count: 2 }].
+// Returns a flat list of { sides, value } in chain order so each die keeps its identity.
+export function rollChain(terms) {
+  return terms.flatMap(({ sides, count }) =>
+    Array.from({ length: count }, () => ({ sides, value: rollDie(sides) }))
+  )
 }
 
-export function formatNotation({ count, sides, modifier, mode }) {
-  const diePart = `${count}d${sides}`
+export function calculateTotal(rolls, modifier) {
+  return rolls.reduce((s, v) => s + (typeof v === 'number' ? v : v.value), 0) + modifier
+}
+
+// Accepts either the chain shape { terms, modifier, mode } or the legacy
+// single-die shape { count, sides, modifier, mode }.
+export function formatNotation({ terms, count, sides, modifier = 0, mode = 'normal' }) {
+  const list = terms ?? [{ sides, count }]
+  const diePart = list.map(t => `${t.count}d${t.sides}`).join(' + ')
   const modPart = modifier > 0 ? `+${modifier}` : modifier < 0 ? `${modifier}` : ''
   const modeSuffix = mode === 'advantage' ? ' ADV' : mode === 'disadvantage' ? ' DIS' : ''
   return `${diePart}${modPart}${modeSuffix}`

@@ -5,7 +5,7 @@ export default function ResultDisplay({ result, rolling, revealed }) {
   if (!result || rolling) return null
 
   const { rolls, dropped, modifier, total } = result
-  const rollSum = rolls.reduce((s, v) => s + v, 0)
+  const rollSum = rolls.reduce((s, v) => s + v.value, 0)
 
   return (
     <div className={`result-display${revealed ? ' result-display--revealed' : ''}`}>
@@ -14,7 +14,7 @@ export default function ResultDisplay({ result, rolling, revealed }) {
       <div className="result-breakdown">
         <span className="result-rolls">
           {rolls.map((v, i) => (
-            <span key={i} className="result-chip">{v}</span>
+            <span key={i} className="result-chip" data-sides={v.sides}>{v.value}</span>
           ))}
         </span>
         {rolls.length > 1 && (
@@ -32,7 +32,7 @@ export default function ResultDisplay({ result, rolling, revealed }) {
           <span className="result-dropped">
             {' '}· dropped:{' '}
             {dropped.map((v, i) => (
-              <span key={i} className="result-chip result-chip--dropped">{v}</span>
+              <span key={i} className="result-chip result-chip--dropped">{v.value}</span>
             ))}
           </span>
         )}

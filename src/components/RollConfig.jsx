@@ -1,12 +1,16 @@
 import { RotateCcw } from 'lucide-react'
 import DieSelector from './DieSelector'
+import ChainBar from './ChainBar'
 import Stepper from './Stepper'
 import ModeToggle from './ModeToggle'
 import RollButton from './RollButton'
 import './RollConfig.css'
 
-export default function RollConfig({ config, onChange, onRoll, onReset, rolling }) {
-  const { dieType, count, modifier, mode } = config
+export default function RollConfig({ config, onChange, onAddDie, onRemoveDie, onRoll, onReset, rolling }) {
+  const { terms, modifier, mode } = config
+  const activeSides = new Set(terms.map(t => t.sides))
+  const chained     = terms.length >= 2
+  const canRoll     = terms.length > 0
 
   return (
     <div className="roll-config panel">
@@ -19,16 +23,9 @@ export default function RollConfig({ config, onChange, onRoll, onReset, rolling 
       >
         <RotateCcw size={16} />
       </button>
-      <DieSelector selected={dieType} onChange={v => onChange({ dieType: v })} />
+      <DieSelector activeSides={activeSides} onAdd={onAddDie} />
+      <ChainBar terms={terms} modifier={modifier} onRemoveDie={onRemoveDie} />
       <div className="roll-config-row">
-        <Stepper
-          label="Count"
-          value={count}
-          onChange={v => onChange({ count: v })}
-          min={1}
-          max={10}
-          formatValue={v => v}
-        />
         <Stepper
           label="Modifier"
           value={modifier}
@@ -39,10 +36,15 @@ export default function RollConfig({ config, onChange, onRoll, onReset, rolling 
         />
       </div>
       <div className="roll-config-row">
-        <ModeToggle mode={mode} onChange={v => onChange({ mode: v })} />
+        <ModeToggle
+          mode={chained ? 'normal' : mode}
+          onChange={v => onChange({ mode: v })}
+          disabled={chained}
+          disabledHint="single die type only"
+        />
       </div>
       <div className="roll-config-row">
-        <RollButton onClick={onRoll} rolling={rolling} />
+        <RollButton onClick={onRoll} rolling={rolling} disabled={!canRoll} />
       </div>
     </div>
   )

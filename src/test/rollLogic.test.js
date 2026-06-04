@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import {
   rollDie,
   rollDice,
+  rollChain,
   rollWithAdvantage,
   rollWithDisadvantage,
   calculateTotal,
@@ -49,10 +50,25 @@ describe('rollWithDisadvantage', () => {
   })
 })
 
+describe('rollChain', () => {
+  it('returns one { sides, value } per die across all terms, in order', () => {
+    const rolls = rollChain([{ sides: 20, count: 1 }, { sides: 4, count: 2 }])
+    expect(rolls).toHaveLength(3)
+    expect(rolls.map(r => r.sides)).toEqual([20, 4, 4])
+    rolls.forEach(r => {
+      expect(r.value).toBeGreaterThanOrEqual(1)
+      expect(r.value).toBeLessThanOrEqual(r.sides)
+    })
+  })
+})
+
 describe('calculateTotal', () => {
   it('sums rolls and adds modifier', () => {
     expect(calculateTotal([4, 6, 8], 2)).toBe(20)
     expect(calculateTotal([10], -3)).toBe(7)
+  })
+  it('sums { sides, value } chain rolls', () => {
+    expect(calculateTotal([{ sides: 20, value: 15 }, { sides: 4, value: 3 }], 2)).toBe(20)
   })
 })
 
@@ -66,5 +82,9 @@ describe('formatNotation', () => {
   it('includes ADV/DIS suffix', () => {
     expect(formatNotation({ count: 1, sides: 20, modifier: 0, mode: 'advantage' })).toBe('1d20 ADV')
     expect(formatNotation({ count: 1, sides: 20, modifier: 0, mode: 'disadvantage' })).toBe('1d20 DIS')
+  })
+  it('chains multiple dice terms', () => {
+    expect(formatNotation({ terms: [{ sides: 20, count: 1 }, { sides: 4, count: 2 }], modifier: 3 }))
+      .toBe('1d20 + 2d4+3')
   })
 })

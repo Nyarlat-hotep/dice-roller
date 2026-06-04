@@ -322,8 +322,8 @@ export default function DiceArena({ result, rolling, dieType, mode, onFormed }) 
 
     const { rolls, dropped } = result
     const allDigits = [
-      ...rolls.map(v => ({ value: v, isDropped: false })),
-      ...(dropped || []).map(v => ({ value: v, isDropped: true })),
+      ...rolls.map(r => ({ value: r.value, sides: r.sides, isDropped: false })),
+      ...(dropped || []).map(r => ({ value: r.value, sides: r.sides, isDropped: true })),
     ]
 
     const totalSlots = allDigits.length
@@ -346,7 +346,7 @@ export default function DiceArena({ result, rolling, dieType, mode, onFormed }) 
       ? 0.65
       : Math.max(0.4, 1.8 * sizeFactor)
 
-    const assignments = allDigits.map(({ value, isDropped }, d) => {
+    const assignments = allDigits.map(({ value, sides, isDropped }, d) => {
       const slotCenterX = slotW * d + slotW / 2
       const slotCenterY = H / 2
 
@@ -360,7 +360,8 @@ export default function DiceArena({ result, rolling, dieType, mode, onFormed }) 
         const jitter    = W < 600 ? 2 : Math.max(2, 7 * sizeFactor)
         psActive[pi].tx    = slotCenterX + (px - 100) * scale + (Math.random() - 0.5) * jitter
         psActive[pi].ty    = slotCenterY + (py - 100) * scale + (Math.random() - 0.5) * jitter
-        const dieColor = DIE_COLORS[dieTypeRef.current] ?? pickColor()
+        // Each digit glows the elemental color of the die it came from.
+        const dieColor = DIE_COLORS[sides] ?? DIE_COLORS[dieTypeRef.current] ?? pickColor()
         if (modeRef.current === 'advantage') {
           psActive[pi].color = isDropped ? dieColor : '#44bb66'   // kept higher = green, dropped lower = die color
         } else if (modeRef.current === 'disadvantage') {

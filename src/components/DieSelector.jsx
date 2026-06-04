@@ -11,15 +11,16 @@ export const DICE = [
   { sides: 100, label: 'd100'  },
 ]
 
-export default function DieSelector({ selected, onChange }) {
+export default function DieSelector({ activeSides, onAdd }) {
   return (
     <div className="die-selector">
       {DICE.map(({ sides, label }) => (
         <button
           key={sides}
-          className={`die-btn${selected === sides ? ' die-btn--active' : ''}`}
+          className={`die-btn${activeSides.has(sides) ? ' die-btn--active' : ''}`}
           data-sides={sides}
-          onClick={() => { playDieSelect(); onChange(sides) }}
+          onClick={() => { playDieSelect(); onAdd(sides) }}
+          title={`Add ${label}`}
         >
           {label}
         </button>

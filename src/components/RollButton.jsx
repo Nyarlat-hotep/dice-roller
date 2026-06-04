@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion'
 import './RollButton.css'
 
-export default function RollButton({ onClick, rolling }) {
+export default function RollButton({ onClick, rolling, disabled }) {
   return (
     <motion.button
       className={`roll-btn${rolling ? ' roll-btn--rolling' : ''}`}
       onClick={onClick}
-      disabled={rolling}
+      disabled={rolling || disabled}
       initial={{ paddingLeft: '2.2rem', paddingRight: '2.2rem' }}
       animate={{
         paddingLeft:  rolling ? '1rem' : '2.2rem',

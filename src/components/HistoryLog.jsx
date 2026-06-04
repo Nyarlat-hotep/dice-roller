@@ -14,11 +14,11 @@ export default function HistoryLog({ history }) {
             <ArrowRight size={12} className="history-arrow" />
             <span className="history-total">{entry.total}</span>
             <span className="history-chips">
-              [{entry.rolls.join(', ')}]
+              [{entry.rolls.map(r => r.value).join(', ')}]
             </span>
-            {entry.dropped && (
+            {entry.dropped && entry.dropped.length > 0 && (
               <span className="history-dropped">
-                dropped [{entry.dropped.join(', ')}]
+                dropped [{entry.dropped.map(r => r.value).join(', ')}]
               </span>
             )}
           </li>

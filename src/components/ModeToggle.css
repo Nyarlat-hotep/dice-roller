@@ -42,3 +42,10 @@
 
 .mode-btn:hover { color: var(--fg-gold); }
 .mode-btn--active { color: var(--fg-gold); }
+
+.mode-toggle--disabled {
+  opacity: 0.4;
+  filter: grayscale(0.6);
+  cursor: not-allowed;
+}
+.mode-toggle--disabled .mode-btn { pointer-events: none; }
