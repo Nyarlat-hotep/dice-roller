@@ -43,9 +43,9 @@
   transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
-.chain-chip-x { opacity: 0; transition: opacity 0.15s ease; }
+.chain-chip-x { opacity: 0.6; transition: opacity 0.15s ease; }
 .chain-chip:hover { transform: translateY(-1px); }
-.chain-chip:hover .chain-chip-x { opacity: 0.9; }
+.chain-chip:hover .chain-chip-x { opacity: 1; }
 .chain-chip:active { transform: translateY(0); }
 
 /* Each chip carries its die's elemental glow, matching the selector + arena */
