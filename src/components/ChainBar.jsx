@@ -1,4 +1,3 @@
-import { X } from 'lucide-react'
 import './ChainBar.css'
 
 // The growing formula: 1d20 + 1d4 + 2. Tap a die chip to remove one of that type.
@@ -24,7 +23,6 @@ export default function ChainBar({ terms, modifier, onRemoveDie }) {
             title={`Remove a d${t.sides}`}
           >
             <span className="chain-chip-label">{t.count}d{t.sides}</span>
-            <X size={11} className="chain-chip-x" />
           </button>
         </span>
       ))}
