@@ -32,8 +32,8 @@
 
 .roll-config-reset:hover {
   border-color: var(--fg-gold, #d4b030);
-  color: #ffe080;
-  background: rgba(212, 176, 48, 0.12);
+  color: var(--fg-parchment);
+  background: rgba(var(--accent-rgb), 0.12);
   transform: rotate(-60deg);
 }
 

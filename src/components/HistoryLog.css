@@ -2,7 +2,7 @@
   max-height: 200px;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(201, 168, 76, 0.25) transparent;
+  scrollbar-color: rgba(var(--accent-rgb), 0.25) transparent;
 }
 
 .history-log::-webkit-scrollbar {
@@ -14,12 +14,12 @@
 }
 
 .history-log::-webkit-scrollbar-thumb {
-  background: rgba(201, 168, 76, 0.25);
+  background: rgba(var(--accent-rgb), 0.25);
   border-radius: 2px;
 }
 
 .history-log::-webkit-scrollbar-thumb:hover {
-  background: rgba(201, 168, 76, 0.45);
+  background: rgba(var(--accent-rgb), 0.45);
 }
 
 .history-label {
@@ -51,7 +51,7 @@
   font-size: 1rem;
   color: var(--fg-parchment-dim);
   padding: 0.25rem 0;
-  border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+  border-bottom: 1px solid rgba(var(--accent-rgb), 0.08);
   animation: historyFadeIn 0.6s ease forwards;
 }
 
@@ -59,4 +59,4 @@
 .history-arrow { color: var(--fg-gold-faint); }
 .history-total { color: var(--fg-parchment); font-size: 1rem; min-width: 3ch; }
 .history-chips { color: var(--fg-gold-dim); font-size: 0.75rem; }
-.history-dropped { color: rgba(201, 168, 76, 0.3); font-size: 0.7rem; }
+.history-dropped { color: rgba(var(--accent-rgb), 0.3); font-size: 0.7rem; }

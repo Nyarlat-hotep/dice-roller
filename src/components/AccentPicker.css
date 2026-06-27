@@ -1,0 +1,57 @@
+.accent-picker {
+  position: absolute;
+  top: 0;
+  right: 2rem; /* sits just left of the mute button */
+}
+
+.accent-toggle {
+  background: none;
+  border: none;
+  color: var(--fg-gold-faint);
+  cursor: pointer;
+  padding: 0.25rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  display: flex;
+}
+
+.accent-toggle:hover {
+  opacity: 1;
+}
+
+.accent-popover {
+  position: absolute;
+  top: 2rem;
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  padding: 0.6rem;
+  background: rgba(15, 18, 42, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  box-shadow: 0 8px 28px var(--shadow);
+  z-index: 50;
+}
+
+.accent-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--swatch);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.accent-swatch:hover {
+  transform: scale(1.18);
+}
+
+.accent-swatch--active {
+  border-color: var(--fg-parchment);
+  box-shadow: 0 0 0 2px var(--bg-body), 0 0 0 3px var(--swatch);
+}

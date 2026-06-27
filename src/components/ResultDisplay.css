@@ -22,7 +22,7 @@
   font-family: inherit;
   color: var(--fg-gold);
   line-height: 1;
-  text-shadow: 0 0 24px rgba(201, 168, 76, 0.4);
+  text-shadow: 0 0 24px rgba(var(--accent-rgb), 0.4);
   margin-bottom: 1.5rem;
 }
 
@@ -64,7 +64,7 @@
   border: 1px solid var(--border-gold);
   border-radius: 4px;
   color: var(--fg-parchment);
-  background: rgba(201, 168, 76, 0.07);
+  background: rgba(var(--accent-rgb), 0.07);
 }
 
 .result-chip--dropped {
@@ -75,4 +75,4 @@
 .result-arrow { color: var(--fg-gold); margin: 0 0.35rem; }
 .result-mod-icon { color: var(--fg-gold-dim); margin-right: 0.15rem; flex-shrink: 0; }
 .result-sum, .result-modifier { color: var(--fg-gold-dim); display: flex; align-items: center; }
-.result-dropped { color: rgba(201, 168, 76, 0.4); }
+.result-dropped { color: rgba(var(--accent-rgb), 0.4); }

@@ -34,7 +34,7 @@
 
 .stepper-btn:hover:not(:disabled) {
   border-color: var(--fg-gold);
-  background: rgba(201, 168, 76, 0.1);
+  background: rgba(var(--accent-rgb), 0.1);
 }
 
 .stepper-btn:disabled {

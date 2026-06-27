@@ -4,18 +4,29 @@
   --bg-body: #0d0f1c;
   --bg-surface: #141828;
   --bg-panel: #1b2038;
-  --fg-gold: #d4b030;
-  --fg-gold-dim: rgba(212, 176, 48, 0.8);
-  --fg-gold-faint: rgba(212, 176, 48, 1);
+  /* Single source for the theme accent — swap this triple to recolor the UI. */
+  --accent-rgb: 212, 176, 48;
+  --fg-gold: rgb(var(--accent-rgb));
+  --fg-gold-dim: rgba(var(--accent-rgb), 0.8);
+  --fg-gold-faint: rgba(var(--accent-rgb), 1);
   --fg-parchment: #f0e6d0;
   --fg-parchment-dim: rgba(240, 230, 208, 0.75);
-  --border-gold: rgba(212, 176, 48, 0.35);
-  --border-gold-hover: rgba(212, 176, 48, 0.7);
+  --border-gold: rgba(var(--accent-rgb), 0.35);
+  --border-gold-hover: rgba(var(--accent-rgb), 0.7);
   --accent-arcane: #8050d0;
   --accent-red: #c02040;
   --accent-red-bright: #e03050;
   --shadow: rgba(0, 0, 0, 0.85);
 }
+
+/* Selectable accents — good contrast on the dark backdrop. */
+:root[data-accent="red"]    { --accent-rgb: 224, 64, 72; }
+:root[data-accent="blue"]   { --accent-rgb: 64, 150, 240; }
+:root[data-accent="green"]  { --accent-rgb: 76, 200, 110; }
+:root[data-accent="purple"] { --accent-rgb: 168, 110, 240; }
+:root[data-accent="orange"] { --accent-rgb: 240, 140, 48; }
+:root[data-accent="gray"]   { --accent-rgb: 170, 178, 192; }
+:root[data-accent="pink"]   { --accent-rgb: 240, 110, 180; }
 
 body {
   font-family: 'Metamorphous', serif;
@@ -31,7 +42,7 @@ body::before {
   inset: 0;
   background-image:
     radial-gradient(ellipse at 25% 15%, rgba(128, 80, 208, 0.12) 0%, transparent 55%),
-    radial-gradient(ellipse at 75% 85%, rgba(212, 176, 48, 0.08) 0%, transparent 55%);
+    radial-gradient(ellipse at 75% 85%, rgba(var(--accent-rgb), 0.08) 0%, transparent 55%);
   pointer-events: none;
   z-index: 0;
 }
@@ -42,10 +53,10 @@ button { font-family: inherit; cursor: pointer; }
 
 html {
   scrollbar-width: thin;
-  scrollbar-color: rgba(201, 168, 76, 0.25) transparent;
+  scrollbar-color: rgba(var(--accent-rgb), 0.25) transparent;
 }
 
 html::-webkit-scrollbar { width: 4px; }
 html::-webkit-scrollbar-track { background: transparent; }
-html::-webkit-scrollbar-thumb { background: rgba(201, 168, 76, 0.25); border-radius: 2px; }
-html::-webkit-scrollbar-thumb:hover { background: rgba(201, 168, 76, 0.45); }
+html::-webkit-scrollbar-thumb { background: rgba(var(--accent-rgb), 0.25); border-radius: 2px; }
+html::-webkit-scrollbar-thumb:hover { background: rgba(var(--accent-rgb), 0.45); }
